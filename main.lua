@@ -89,5 +89,7 @@ function afterlife.ai_turn()
 end
 
 
+wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it. Name is \"Afterlife\"")
+
 
 -- >>
