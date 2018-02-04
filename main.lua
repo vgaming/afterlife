@@ -57,7 +57,7 @@ local function copy_units(from_side, to_side, to_pos)
 		unit.y = y
 		unit.moves = unit.max_moves
 
-		local percent = 30 + wesnoth.current.turn * 3
+		local percent = 20 + wesnoth.current.turn * 10
 		local increase_percent = percent - 100
 		local ability = T.name_only {
 			name = "copy" .. percent ..  "%",
