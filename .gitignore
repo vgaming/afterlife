@@ -1,2 +1,5 @@
 #### auto-generated files:
 /target/
+
+#### private stuff (passwords etc)
+/.build/.private*
