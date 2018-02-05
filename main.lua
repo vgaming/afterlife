@@ -8,6 +8,11 @@ local string = string
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
+local wave_length = 2  -- also change experience_modifier in _main.cfg
+local copy_strength_start = 20
+local copy_strength_increase = 5
+
+
 wesnoth.wml_actions.kill {
 	canrecruit = true,
 	side = "2,4",
@@ -57,7 +62,7 @@ local function copy_units(from_side, to_side, to_pos)
 		unit.y = y
 		unit.moves = unit.max_moves
 
-		local percent = 24 + wesnoth.current.turn * 6
+		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
 		local increase_percent = percent - 100
 		local ability = T.name_only {
 			name = "copy" .. percent ..  "%",
@@ -78,14 +83,16 @@ end
 
 
 function afterlife.turn_refresh()
-	if wesnoth.current.turn % 3 == 1 then
+	if wesnoth.current.turn % wave_length == 1 then
 		if wesnoth.current.side == 2 then
 			copy_units(3, 2, pos2)
 		elseif wesnoth.current.side == 4 then
 			copy_units(1, 4, pos4)
 		end
 	end
-	local next_wave_turn = wesnoth.current.turn - (wesnoth.current.turn + 1) % 3 + 2
+	local next_wave_turn = wesnoth.current.turn
+		- (wesnoth.current.turn - 2) % wave_length
+		+ wave_length - 1
 	wesnoth.wml_actions.label {
 		x = 8,
 		y = 2,
