@@ -3,8 +3,8 @@
 local wesnoth = wesnoth
 afterlife = {}
 local afterlife = afterlife
-local print = print
 local ipairs = ipairs
+local string = string
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
@@ -23,10 +23,10 @@ pos4 = { x = pos4[1], y = pos4[2] }
 
 
 wesnoth.wml_actions.event {
-	id = "afterlife_ai_turn",
-	name = "side 2 turn refresh,side 4 turn refresh",
+	id = "afterlife_turn_refresh",
+	name = "turn refresh",
 	first_time_only = false,
-	T.lua { code = "afterlife.ai_turn()" }
+	T.lua { code = "afterlife.turn_refresh()" }
 }
 
 
@@ -77,20 +77,25 @@ local function copy_units(from_side, to_side, to_pos)
 end
 
 
-function afterlife.ai_turn()
-	print("AI moving!")
+function afterlife.turn_refresh()
 	if wesnoth.current.turn % 3 == 1 then
 		if wesnoth.current.side == 2 then
 			copy_units(3, 2, pos2)
-		else
+		elseif wesnoth.current.side == 4 then
 			copy_units(1, 4, pos4)
 		end
 	end
+	local next_wave_turn = wesnoth.current.turn - (wesnoth.current.turn + 1) % 3 + 2
+	wesnoth.wml_actions.label {
+		x = 8,
+		y = 2,
+		text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
+	}
 end
 
 
 wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it. "
-	.. "Name is \"Afterlife\". Game rules: Ctrl J")
+	.. "Name is \"Afterlife\".")
 
 
 -- >>
