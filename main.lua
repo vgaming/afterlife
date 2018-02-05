@@ -66,9 +66,9 @@ local function copy_units(from_side, to_side, to_pos)
 		local increase_percent = percent - 100
 		local ability = T.name_only {
 			name = "copy" .. percent ..  "%",
-			description = "unit copied from side " .. from_side .. ", "
-				.. percent .. "% hitpoints, "
-				.. percent .. "% damage"
+			description = percent .. "% hitpoints, "
+				.. percent .. "% damage, "
+				.. "unit copied from side " .. from_side
 		}
 		wesnoth.add_modification(unit, "object", {
 			T.effect { apply_to = "attack", increase_damage = increase_percent .. "%" },
