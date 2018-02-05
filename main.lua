@@ -57,7 +57,7 @@ local function copy_units(from_side, to_side, to_pos)
 		unit.y = y
 		unit.moves = unit.max_moves
 
-		local percent = 20 + wesnoth.current.turn * 5
+		local percent = 25 + wesnoth.current.turn * 7
 		local increase_percent = percent - 100
 		local ability = T.name_only {
 			name = "copy" .. percent ..  "%",
@@ -79,7 +79,7 @@ end
 
 function afterlife.ai_turn()
 	print("AI moving!")
-	if wesnoth.current.turn % 2 == 1 then
+	if wesnoth.current.turn % 3 == 1 then
 		if wesnoth.current.side == 2 then
 			copy_units(3, 2, pos2)
 		else
