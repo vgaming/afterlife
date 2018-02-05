@@ -1,3 +1,4 @@
+
 Contacts:
 * vn971 on IRC.freenode.net (I often visit #wesnoth-dev)
 * BTC: 148AvMtozrKs3MzXCNMGNUTHLoqahw3fCo
