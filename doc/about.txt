@@ -3,4 +3,4 @@ Afterlife -- a map with elements of survival and HvH (human-vs-human) games.
 Each two turns your units are copied to enemy part of the map to be controlled by AI.
 These copies get stronger every turn.
 
-Note: this map has similarities with ''Sacrifice survival'', but I hope it is more balanced.
+Playing time: ~ 25 minutes.
