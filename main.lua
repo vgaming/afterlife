@@ -118,19 +118,20 @@ function afterlife.turn_refresh()
 		if wesnoth.current.side == 1 then
 			copy_units(human_side2, ai_side1)
 			copy_units(human_side1, ai_side2)
-			local next_wave_turn = wesnoth.current.turn
-				- (wesnoth.current.turn - 2) % wave_length
-				+ wave_length - 1
-			wesnoth.wml_actions.label {
-				x = 8,
-				y = 2,
-				text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
-			}
 		end
 		if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
 			unpetrify_units()
 		end
 	end
+	-- print("turn", wesnoth.current.turn, "side", wesnoth.current.side, "div", (wesnoth.current.turn - 2) % wave_length)
+	local next_wave_turn = wesnoth.current.turn
+		- (wesnoth.current.turn - 2) % wave_length
+		+ wave_length - 1
+	wesnoth.wml_actions.label {
+		x = 8,
+		y = 2,
+		text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
+	}
 end
 
 
