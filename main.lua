@@ -4,6 +4,7 @@ local wesnoth = wesnoth
 afterlife = {}
 local afterlife = afterlife
 local ipairs = ipairs
+local math = math
 local string = string
 local helper = wesnoth.require("lua/helper.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
@@ -16,10 +17,6 @@ local copy_strength_increase = 5
 
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
-local ai_pos_1 = wesnoth.get_starting_location(ai_side1)
-ai_pos_1 = { x = ai_pos_1[1], y = ai_pos_1[2] }
-local ai_pos_2 = wesnoth.get_starting_location(ai_side2)
-ai_pos_2 = { x = ai_pos_2[1], y = ai_pos_2[2] }
 
 
 wesnoth.wml_actions.kill {
@@ -37,6 +34,21 @@ wesnoth.wml_actions.event {
 	first_time_only = false,
 	T.lua { code = "afterlife.turn_refresh()" }
 }
+
+
+local function find_vacant(unit)
+	local x_start = unit.side == human_side1 and 9 or 7
+	local x_end = unit.side == human_side1 and 15 or 1
+	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
+	for y = 1, 13 do
+		for x = x_start, x_end, x_step do
+			local is_edge = y == 1 and (x == x_end or x == x_start)
+			if wesnoth.get_unit(x, y) == nil and not is_edge then
+				return x, y
+			end
+		end
+	end
+end
 
 
 local function make_copy(unit_userdata, x, y)
@@ -62,9 +74,9 @@ local function make_copy(unit_userdata, x, y)
 end
 
 
-local function copy_units(from_side, to_side, to_pos)
+local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
-		local x, y = wesnoth.find_vacant_tile(to_pos.x, to_pos.y, unit_original)
+		local x, y = find_vacant(unit_original)
 		local new_id = make_copy(unit_original, x, y)
 		local unit = wesnoth.get_units { id = new_id }[1]
 		unit.side = to_side
@@ -104,8 +116,8 @@ end
 function afterlife.turn_refresh()
 	if wesnoth.current.turn % wave_length == 1 then
 		if wesnoth.current.side == 1 then
-			copy_units(human_side2, ai_side1, ai_pos_1)
-			copy_units(human_side1, ai_side2, ai_pos_2)
+			copy_units(human_side2, ai_side1)
+			copy_units(human_side1, ai_side2)
 			local next_wave_turn = wesnoth.current.turn
 				- (wesnoth.current.turn - 2) % wave_length
 				+ wave_length - 1
