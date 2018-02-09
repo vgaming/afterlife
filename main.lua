@@ -11,7 +11,7 @@ local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
 local wave_length = 2  -- also change: experience_modifier in _main.cfg, text in about.txt
-local copy_strength_start = 27 -- point of no return is about 60-70%
+local copy_strength_start = 27 -- point of no return is about 50%
 local copy_strength_increase = 3
 
 
@@ -77,6 +77,7 @@ end
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local x, y = find_vacant(unit_original)
+		if x == nil then return end
 		local new_id = make_copy(unit_original, x, y)
 		local unit = wesnoth.get_units { id = new_id }[1]
 		unit.side = to_side
