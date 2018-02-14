@@ -11,8 +11,8 @@ local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
 local wave_length = 2  -- also change: experience_modifier in _main.cfg, text in about.txt
-local copy_strength_start = 27 -- point of no return is about 50%
-local copy_strength_increase = 3
+local copy_strength_start = 32 -- point of no return is about 50%
+local copy_strength_increase = 2
 
 
 local human_side1, human_side2 = 1,3
