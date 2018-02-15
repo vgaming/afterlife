@@ -1,4 +1,4 @@
 
 FAQ:
 Q: is it fair that West is being attacked first?
-No. As a compensation for that fact, West has +2 income. This value is subject to change in future.
+No. As a compensation for that fact, West has +1 income. This value is subject to change in future.
