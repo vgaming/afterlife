@@ -25,7 +25,7 @@ wesnoth.wml_actions.kill {
 	fire_event = false,
 	animate = false,
 }
-wesnoth.sides[human_side1].base_income = wesnoth.sides[human_side1].base_income + 1
+wesnoth.sides[human_side1].base_income = wesnoth.sides[human_side1].base_income + 0
 
 
 wesnoth.wml_actions.event {
