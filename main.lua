@@ -136,6 +136,7 @@ function afterlife.turn_refresh()
 end
 
 
+print("active mods:", wesnoth.game_config.mp_settings.active_mods)
 wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it. "
 	.. "Name is \"Afterlife\".")
 
