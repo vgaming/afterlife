@@ -1,4 +1,4 @@
-Afterlife -- a map with elements of survival and HvH (human-vs-human) games.
+Afterlife -- a survival and human-vs-human map.
 
 Each two turns your units are copied to enemy part of the map to be controlled by AI.
 These copies get stronger every turn.
