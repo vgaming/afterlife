@@ -2,5 +2,5 @@ title="Afterlife HvH survival"
 
 email="n1m5spm@yandex.com"
 author="Vasya N"
-icon="units/human-loyalists/spearman.png~GS()"
+icon="misc/blank-hex.png~BLIT(units/human-loyalists/spearman.png~CROP(20,0,31,72)~FL())~BLIT(units/human-loyalists/spearman.png~CROP(20,0,31,72)~GS(),36,0)"
 type="scenario_mp"
