@@ -17,7 +17,7 @@ local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
 
 local kilometers_endgame = 21
-wesnoth.set_variable("afterlife_kilometers_endgame", kilometers_endgame)
+wesnoth.set_variable("afterlife_hexes_endgame", kilometers_endgame)
 
 for _, side in ipairs(wesnoth.sides) do
 	side.base_income = side.base_income + 10
@@ -129,7 +129,7 @@ local function scroll_down(sides, is_left, enemy)
 		}
 	end
 	wesnoth.wml_actions.label {
-		text = "kilometers run:\n" .. kilometers,
+		text = "hexes: " .. kilometers,
 		x = border + (is_left and math.floor(width / 4) or math.floor(width * 3 / 4)),
 		y = height,
 	}
