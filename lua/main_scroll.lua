@@ -87,9 +87,9 @@ local function scroll_terrain(is_left, distance)
 	for y = height +1, distance, -1 do
 		local x_start = x_start_func(is_left)
 		for x = x_start, x_start + half_width - 1 do
-			local new_terrain = wesnoth.get_terrain(x, y - distance)
-			if wesnoth.get_terrain(x, y) ~= "Kh" and new_terrain ~= "Kh" then
-				wesnoth.set_terrain(x, y, new_terrain)
+			local old_terrain = wesnoth.get_terrain(x, y)
+			if old_terrain ~= "Kh" and old_terrain ~= "Rrc" then
+				wesnoth.set_terrain(x, y, wesnoth.get_terrain(x, y - distance))
 			end
 		end
 	end
