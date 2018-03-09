@@ -4,6 +4,7 @@ afterlife = {}
 local afterlife = afterlife
 local wesnoth = wesnoth
 local ipairs = ipairs
+local math = math
 local helper = wesnoth.require("lua/helper.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
@@ -67,7 +68,31 @@ local function unpetrify_units()
 end
 
 
+local width, height, border = wesnoth.get_map_size()
+--print("whb", width, height, border) -- 15,13,1
+local half = (width - 1) / 2
+local left_left = border
+local left_right = border + half - 1
+local right_left = border + half + 1
+local right_right = border + width - 1
+
+local function find_vacant(unit)
+	local x_start = unit.side == 1 and right_left or left_right
+	local x_end = unit.side == 1 and right_right or left_left
+	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
+	for y = border, height do
+		for x = x_start, x_end, x_step do
+			local is_edge = y == 1 and (x == x_end or x == x_start)
+			if wesnoth.get_unit(x, y) == nil and not is_edge then
+				return { x = x, y = y }
+			end
+		end
+	end
+end
+
+
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
+afterlife.find_vacant = find_vacant
 
 -- >>

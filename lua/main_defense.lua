@@ -35,24 +35,9 @@ wesnoth.wml_actions.event {
 }
 
 
-local function find_vacant(unit)
-	local x_start = unit.side == human_side1 and 9 or 7
-	local x_end = unit.side == human_side1 and 15 or 1
-	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
-	for y = 1, 13 do
-		for x = x_start, x_end, x_step do
-			local is_edge = y == 1 and (x == x_end or x == x_start)
-			if wesnoth.get_unit(x, y) == nil and not is_edge then
-				return { x = x, y = y }
-			end
-		end
-	end
-end
-
-
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
-		local to_pos = find_vacant(unit_original)
+		local to_pos = afterlife.find_vacant(unit_original)
 		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
 		afterlife.copy_unit(unit_original, to_pos, to_side, percent)
 	end
