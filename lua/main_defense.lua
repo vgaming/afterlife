@@ -1,7 +1,6 @@
 -- << afterlife_main
 
 local wesnoth = wesnoth
-afterlife = {}
 local afterlife = afterlife
 local ipairs = ipairs
 local math = math
@@ -44,72 +43,18 @@ local function find_vacant(unit)
 		for x = x_start, x_end, x_step do
 			local is_edge = y == 1 and (x == x_end or x == x_start)
 			if wesnoth.get_unit(x, y) == nil and not is_edge then
-				return x, y
+				return { x = x, y = y }
 			end
 		end
 	end
 end
 
 
-local function make_copy(unit_userdata, x, y)
-	wesnoth.wml_actions.store_unit {
-		T.filter { id = unit_userdata.id },
-		variable = "afterlife_unit",
-	}
-	local unit_var = wesnoth.get_variable("afterlife_unit")
-	local id = helper.rand("0..1000000000")
-		.. helper.rand("0..1000000000")
-		.. helper.rand("0..1000000000")
-	unit_var.id = id
-	unit_var.underlying_id = id
-	unit_var.canrecruit = false
-	unit_var.x = x
-	unit_var.y = y
-	wesnoth.set_variable("afterlife_unit", unit_var)
-	wesnoth.wml_actions.unstore_unit {
-		variable = "afterlife_unit",
-	}
-	wesnoth.set_variable("afterlife_unit", nil)
-	return id
-end
-
-
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
-		local x, y = find_vacant(unit_original)
-		if x == nil then return end
-		local new_id = make_copy(unit_original, x, y)
-		local unit = wesnoth.get_units { id = new_id }[1]
-		unit.side = to_side
-		unit.status.poisoned = false
-		unit.status.slowed = false
-		unit.status.petrified = true
-		unit.variables.afterlife_petrified = true
-		unit.moves = unit.max_moves
-
+		local to_pos = find_vacant(unit_original)
 		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
-		local increase_percent = percent - 100
-		local ability = T.name_only {
-			name = "copy" .. percent ..  "%",
-			description = percent .. "% hitpoints, "
-				.. percent .. "% damage, "
-				.. "unit copied from side " .. from_side
-		}
-		wesnoth.add_modification(unit, "object", {
-			T.effect { apply_to = "attack", increase_damage = increase_percent .. "%" },
-			T.effect { apply_to = "hitpoints", increase_total = increase_percent .. "%", heal_full = true },
-			T.effect { apply_to = "new_ability", T.abilities { ability } },
-		})
-	end
-end
-
-
-local function unpetrify_units()
-	for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side }) do
-		if unit.variables.afterlife_petrified then
-			unit.status.petrified = false
-			unit.variables.afterlife_petrified = nil
-		end
+		afterlife.copy_unit(unit_original, to_pos, to_side, percent)
 	end
 end
 
@@ -121,7 +66,7 @@ function afterlife.turn_refresh()
 			copy_units(human_side1, ai_side2)
 		end
 		if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
-			unpetrify_units()
+			afterlife.unpetrify_units()
 		end
 	end
 	-- print("turn", wesnoth.current.turn, "side", wesnoth.current.side, "div", (wesnoth.current.turn - 2) % wave_length)
