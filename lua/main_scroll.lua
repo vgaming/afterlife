@@ -19,6 +19,10 @@ local ai_side1, ai_side2 = 2,4
 local kilometers_endgame = 21
 wesnoth.set_variable("afterlife_kilometers_endgame", kilometers_endgame)
 
+for _, side in ipairs(wesnoth.sides) do
+	side.base_income = side.base_income + 10
+end
+
 wesnoth.wml_actions.kill {
 	canrecruit = true,
 	side = ai_side1 .. "," .. ai_side2,
