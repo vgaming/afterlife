@@ -2,7 +2,6 @@
 
 local wesnoth = wesnoth
 local afterlife = afterlife
-local assert = assert
 local error = error
 local ipairs = ipairs
 local math = math
@@ -55,10 +54,6 @@ local terrains = {
 	{10, "Gd"}, -- grass3
 	{10, "Gll"}, -- grass4
 }
-local base_probability = {}
-for _, terr in ipairs(terrains) do
-	base_probability[terr[2]] = terr[1]
-end
 local accumulated = {}
 local terrain_sum = 0
 for _, terr in ipairs(terrains) do
@@ -183,11 +178,5 @@ wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it
 
 
 afterlife.turn_refresh = turn_refresh
-
-function aftfill() -- TODO
-	scroll_terrain(false, height - 1)
-	scroll_terrain(true, height - 1)
-	wesnoth.wml_actions.redraw {}
-end
 
 -- >>
