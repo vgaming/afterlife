@@ -116,11 +116,11 @@ local function scroll_down(sides, is_left, enemy)
 		wesnoth.put_unit(unit.x, unit.y + distance, unit)
 	end
 	scroll_terrain(is_left, wesnoth.current.turn == 1 and height -1 or distance)
-	local kilometers = wesnoth.get_variable("afterlife_km_" .. sides) or 0
-	kilometers = kilometers + distance
-	wesnoth.set_variable("afterlife_km_" .. sides, kilometers)
-	print("distance for side", sides, "is", distance, "kilometers", kilometers)
-	if kilometers >= hexes_endgame then
+	local total_hexes = wesnoth.get_variable("afterlife_km_" .. sides) or 0
+	total_hexes = total_hexes + distance
+	wesnoth.set_variable("afterlife_km_" .. sides, total_hexes)
+	print("distance for side", sides, "is", distance, "total_hexes:", total_hexes)
+	if total_hexes >= hexes_endgame then
 		wesnoth.wml_actions.kill {
 			side = enemy,
 			animate = false,
@@ -129,7 +129,7 @@ local function scroll_down(sides, is_left, enemy)
 		}
 	end
 	wesnoth.wml_actions.label {
-		text = "hexes: " .. kilometers,
+		text = "hexes: " .. total_hexes,
 		x = border + (is_left and math.floor(width / 4) or math.floor(width * 3 / 4)),
 		y = height,
 	}
