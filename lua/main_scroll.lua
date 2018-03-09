@@ -16,8 +16,8 @@ local wave_length = 2  -- also change: text in about.txt
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
 
-local kilometers_endgame = 21
-wesnoth.set_variable("afterlife_hexes_endgame", kilometers_endgame)
+local hexes_endgame = 21
+wesnoth.set_variable("afterlife_hexes_endgame", hexes_endgame)
 
 for _, side in ipairs(wesnoth.sides) do
 	side.base_income = side.base_income + 10
@@ -120,7 +120,7 @@ local function scroll_down(sides, is_left, enemy)
 	kilometers = kilometers + distance
 	wesnoth.set_variable("afterlife_km_" .. sides, kilometers)
 	print("distance for side", sides, "is", distance, "kilometers", kilometers)
-	if kilometers >= kilometers_endgame then
+	if kilometers >= hexes_endgame then
 		wesnoth.wml_actions.kill {
 			side = enemy,
 			animate = false,
