@@ -84,11 +84,13 @@ local function x_start_func(is_left)
 end
 
 local function scroll_terrain(is_left, distance)
-	for y = height - 1, distance, -1 do
+	for y = height +1, distance, -1 do
 		local x_start = x_start_func(is_left)
 		for x = x_start, x_start + half_width - 1 do
-			local t = wesnoth.get_terrain(x, y - distance)
-			wesnoth.set_terrain(x, y, wesnoth.get_terrain(x, y - distance))
+			local new_terrain = wesnoth.get_terrain(x, y - distance)
+			if wesnoth.get_terrain(x, y) ~= "Kh" and new_terrain ~= "Kh" then
+				wesnoth.set_terrain(x, y, new_terrain)
+			end
 		end
 	end
 	local x_start = x_start_func(is_left)
@@ -116,9 +118,9 @@ local function scroll_down(sides, is_left, enemy)
 		wesnoth.put_unit(unit.x, unit.y + distance, unit)
 	end
 	scroll_terrain(is_left, wesnoth.current.turn == 1 and height -1 or distance)
-	local total_hexes = wesnoth.get_variable("afterlife_km_" .. sides) or 0
+	local total_hexes = wesnoth.get_variable("afterlife_hexes_" .. sides) or 0
 	total_hexes = total_hexes + distance
-	wesnoth.set_variable("afterlife_km_" .. sides, total_hexes)
+	wesnoth.set_variable("afterlife_hexes_" .. sides, total_hexes)
 	print("distance for side", sides, "is", distance, "total_hexes:", total_hexes)
 	if total_hexes >= hexes_endgame then
 		wesnoth.wml_actions.kill {
