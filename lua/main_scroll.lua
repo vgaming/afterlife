@@ -15,7 +15,7 @@ local wave_length = 2  -- also change: text in about.txt
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
 
-local hexes_endgame = 21
+local hexes_endgame = 17
 wesnoth.set_variable("afterlife_hexes_endgame", hexes_endgame)
 
 for _, side in ipairs(wesnoth.sides) do
@@ -97,14 +97,21 @@ local function scroll_terrain(is_left, distance)
 end
 
 
-local function copy_units(from_side, to_side, percent)
+local function copy_units(from_side, to_side, scrolled_distance)
+	local copy_strength = scrolled_distance >= 5 and 100
+		or scrolled_distance == 4 and 80
+		or scrolled_distance == 3 and 60
+		or scrolled_distance == 2 and 40
+		or scrolled_distance == 1 and 20
+		or 10
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local to_pos = afterlife.find_vacant(unit_original)
-		afterlife.copy_unit(unit_original, to_pos, to_side, percent)
+		afterlife.copy_unit(unit_original, to_pos, to_side, copy_strength)
 	end
 end
 
-local function scroll_down(sides, is_left, enemy)
+local function scroll_down(human, ai, is_left, enemy)
+	local sides = human .. "," .. ai
 	local function sorting_f(a, b) return a.y > b.y end
 	local units = wesnoth.get_units { side = sides }
 	table.sort(units, sorting_f)
@@ -117,11 +124,14 @@ local function scroll_down(sides, is_left, enemy)
 	total_hexes = total_hexes + distance
 	wesnoth.set_variable("afterlife_hexes_" .. sides, total_hexes)
 	print("distance for side", sides, "is", distance, "total_hexes:", total_hexes)
-	if total_hexes >= hexes_endgame then
+	if total_hexes >= hexes_endgame and not wesnoth.get_variable("afterlife_endgame") then
+		wesnoth.set_variable("afterlife_endgame", true)
+		--wesnoth.wml_actions.endlevel {
+		--	T.result { side = human, result = "victory"},
+		--	T.result { side = enemy, result = "defeat"},
+		--}
 		wesnoth.wml_actions.kill {
 			side = enemy,
-			animate = false,
-			fire_event = true,
 			canrecruit = true,
 		}
 	end
@@ -130,20 +140,14 @@ local function scroll_down(sides, is_left, enemy)
 		x = border + (is_left and math.floor(width / 4) or math.floor(width * 3 / 4)),
 		y = height,
 	}
-	local copy_strength = distance >= 5 and 100
-		or distance == 4 and 80
-		or distance == 3 and 60
-		or distance == 2 and 40
-		or distance == 1 and 20
-		or 10
-	return copy_strength
+	return distance
 end
 
 local function turn_refresh()
 	if wesnoth.current.turn % wave_length == 1 then
 		if wesnoth.current.side == 1 then
-			local scrolled_left = scroll_down(human_side1 .. "," .. ai_side1, true, human_side2)
-			local scrolled_right = scroll_down(human_side2 .. "," .. ai_side2, false, human_side1)
+			local scrolled_left = scroll_down(human_side1, ai_side1, true, human_side2)
+			local scrolled_right = scroll_down(human_side2, ai_side2, false, human_side1)
 			copy_units(human_side1, ai_side2, scrolled_right)
 			copy_units(human_side2, ai_side1, scrolled_left)
 			wesnoth.wml_actions.redraw {}
