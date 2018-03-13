@@ -1,0 +1,7 @@
+<b>Rules</b>
+You fight with enemy waves that spawn each time you pass a new barrier.
+
+A wave consists of enemy units copied and controlled by AI.
+The higher the barrier, the stronger the copies.
+
+Be the first to destroy all waves!

@@ -32,8 +32,8 @@ end
 
 
 local function copy_unit(unit_original, to_pos, to_side, strength_percent)
-	local from_side = unit_original.side
 	if to_pos == nil or to_pos.x == nil then return end
+	local from_side = unit_original.side
 	local new_id = unit_wml_transform(unit_original, to_pos.x, to_pos.y)
 	local unit = wesnoth.get_units { id = new_id }[1]
 	unit.side = to_side
@@ -59,7 +59,7 @@ end
 
 
 local function unpetrify_units()
-	for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side }) do
+	for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side, status = "petrified" }) do
 		if unit.variables.afterlife_petrified then
 			unit.status.petrified = false
 			unit.variables.afterlife_petrified = nil
@@ -69,21 +69,24 @@ end
 
 
 local width, height, border = wesnoth.get_map_size()
---print("whb", width, height, border) -- 15,13,1
 local half = (width - 1) / 2
 local left_left = border
 local left_right = border + half - 1
 local right_left = border + half + 1
 local right_right = border + width - 1
 
-local function find_vacant(unit)
+local function find_vacant(unit, y_min)
+	y_min = y_min or border
+	y_min = math.max(border, y_min)
 	local x_start = unit.side == 1 and right_left or left_right
 	local x_end = unit.side == 1 and right_right or left_left
 	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
-	for y = border, height do
+	for y = y_min, height do
 		for x = x_start, x_end, x_step do
 			local is_edge = y == 1 and (x == x_end or x == x_start)
-			if wesnoth.get_unit(x, y) == nil and not is_edge then
+			if wesnoth.get_unit(x, y) == nil
+				and not wesnoth.get_terrain(x, y) == "Xv"
+				and not is_edge then
 				return { x = x, y = y }
 			end
 		end

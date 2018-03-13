@@ -23,6 +23,9 @@ wesnoth.wml_actions.kill {
 	animate = false,
 }
 wesnoth.sides[human_side1].base_income = wesnoth.sides[human_side1].base_income + 0
+for _, side in ipairs(wesnoth.sides) do
+	side.village_support = side.village_support + 2
+end
 
 
 wesnoth.wml_actions.event {
