@@ -95,7 +95,7 @@ local function find_vacant(unit, y_min)
 	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
 	for y = y_min, height do
 		for x = x_start, x_end, x_step do
-			local is_edge = y == 1 and (x == x_end or x == x_start)
+			local is_edge = y == y_min and (x == x_end or x == x_start)
 			if wesnoth.get_unit(x, y) == nil
 				and wesnoth.get_terrain(x, y) ~= "Xv"
 				and not is_edge then
