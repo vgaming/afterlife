@@ -10,6 +10,12 @@ local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
+local sides = {
+	[1] = { enemy_human = 3, enemy_ai = 2, half_owner = 1 },
+	[2] = { half_owner = 1},
+	[3] = { enemy_human = 1, enemy_ai = 4, half_owner = 3 },
+	[4] = { half_owner = 2},
+}
 
 for _, side in ipairs(wesnoth.sides) do
 	side.village_support = side.village_support + 1
@@ -27,6 +33,12 @@ wesnoth.wml_actions.event {
 	name = "turn refresh",
 	first_time_only = false,
 	T.lua { code = "afterlife.turn_refresh()" }
+}
+wesnoth.wml_actions.event {
+	id = "afterlife_die",
+	name = "die",
+	first_time_only = false,
+	T.lua { code = "afterlife.die()" }
 }
 
 local waves = {
@@ -55,7 +67,7 @@ local function copy_units(from_side, to_side, copy_strength, y_min)
 end
 
 
-local function generate_wave(side, enemy_human, enemy_ai)
+local function generate_wave(side)
 	local prev_distance = wesnoth.get_variable("afterlife_distance_" .. side) or height + 1
 	local units = wesnoth.get_units { side = side }
 	table.sort(units, function(a, b) return a.y > b.y end)
@@ -64,31 +76,45 @@ local function generate_wave(side, enemy_human, enemy_ai)
 	print("side", side, "distance", new_distance)
 	for idx, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
-			copy_units(enemy_human, enemy_ai, waves.strength(idx), new_distance - 8)
+			copy_units(sides[side].enemy_human, sides[side].enemy_ai, waves.strength(idx), new_distance - 7)
 		end
 	end
 end
 
 
-local function check_win(side, enemy_ai, enemy_human)
-	if wesnoth.current.side == enemy_human
+local function check_win(side)
+	if (side == human_side1 or side == human_side2)
 		and wesnoth.get_variable("afterlife_distance_" .. side) <= waves[#waves].y
-		and #wesnoth.get_units { side = enemy_ai } == 0 then
+		and not afterlife.has_unit { side = sides[side].enemy_ai } then
 		wesnoth.wml_actions.kill {
-			side = enemy_human,
+			side = sides[side].enemy_human,
 			canrecruit = true,
+		}
+		wesnoth.wml_actions.endlevel {
+			T.result { side = side, result = "victory" },
+			T.result { side = sides[side].enemy_human, result = "defeat" },
 		}
 	end
 end
 
 
+local function die()
+	--print("die event", wesnoth.current.side, sides[wesnoth.current.side].half_owner)
+	check_win(sides[wesnoth.current.side].half_owner)
+end
+
+
 local function turn_refresh()
 	if wesnoth.current.side == 1 then
-		generate_wave(human_side1, human_side2, ai_side1)
-		generate_wave(human_side2, human_side1, ai_side2)
+		generate_wave(human_side1)
+		generate_wave(human_side2)
 	end
-	check_win(human_side1, ai_side1, human_side2)
-	check_win(human_side2, ai_side2, human_side1)
+	if wesnoth.current.side == human_side2 then
+		check_win(human_side1)
+	end
+	if wesnoth.current.side == human_side1 then
+		check_win(human_side2)
+	end
 	afterlife.unpetrify_units()
 end
 
@@ -121,5 +147,6 @@ wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it
 
 
 afterlife.turn_refresh = turn_refresh
+afterlife.die = die
 
 -- >>

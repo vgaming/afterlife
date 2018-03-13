@@ -8,6 +8,17 @@ local math = math
 local helper = wesnoth.require("lua/helper.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
+
+local function has_unit(cfg)
+	afterlife.temp = false
+	wesnoth.wml_actions["if"] {
+		T.have_unit(cfg),
+		T["then"] { T.lua { code = "afterlife.temp = true" } }
+	}
+	return afterlife.temp
+end
+
+
 local function unit_wml_transform(unit_userdata, x, y)
 	wesnoth.wml_actions.store_unit {
 		T.filter { id = unit_userdata.id },
@@ -94,6 +105,7 @@ local function find_vacant(unit, y_min)
 end
 
 
+afterlife.has_unit = has_unit
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
 afterlife.find_vacant = find_vacant
