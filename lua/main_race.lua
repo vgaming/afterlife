@@ -85,7 +85,7 @@ end
 local function check_win(side)
 	if (side == human_side1 or side == human_side2)
 		and wesnoth.get_variable("afterlife_distance_" .. side) <= waves[#waves].y
-		and not afterlife.has_unit { side = sides[side].enemy_ai } then
+		and not wesnoth.wml_conditionals.has_unit { side = sides[side].enemy_ai } then
 		wesnoth.wml_actions.kill {
 			side = sides[side].enemy_human,
 			canrecruit = true,

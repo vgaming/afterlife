@@ -9,7 +9,8 @@ local helper = wesnoth.require("lua/helper.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
-local function has_unit(cfg)
+wesnoth.wml_conditionals = wesnoth.wml_conditionals or {}
+wesnoth.wml_conditionals.has_unit = wesnoth.wml_conditionals.has_unit or function(cfg)
 	afterlife.temp = false
 	wesnoth.wml_actions["if"] {
 		T.have_unit(cfg),
@@ -105,7 +106,6 @@ local function find_vacant(unit, y_min)
 end
 
 
-afterlife.has_unit = has_unit
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
 afterlife.find_vacant = find_vacant
