@@ -33,16 +33,17 @@ wesnoth.wml_actions.event {
 }
 
 local waves = {
-	{ y = 41, strength = 10 },
-	{ y = 38, strength = 16 },
-	{ y = 34, strength = 23 },
-	{ y = 30, strength = 30 },
-	{ y = 26, strength = 36 },
-	{ y = 22, strength = 43 },
-	{ y = 18, strength = 50 },
-	{ y = 14, strength = 56 },
-	{ y = 10, strength = 63 },
-	{ y = 6, strength = 70 },
+	{ y = 41 }, -- 1
+	{ y = 38 },
+	{ y = 34 },
+	{ y = 30 },
+	{ y = 26 },
+	{ y = 22 },
+	{ y = 18 },
+	{ y = 14 },
+	{ y = 10 },
+	{ y = 6 }, -- 10
+	strength = function(idx) return 40 + idx * 3 end
 }
 
 local width, height, border = wesnoth.get_map_size()
@@ -64,9 +65,9 @@ local function generate_wave(side, enemy_human, enemy_ai)
 	local new_distance = units[#units].y
 	wesnoth.set_variable("afterlife_distance_" .. side, new_distance)
 	print("side", side, "distance", new_distance)
-	for _, wave_info in ipairs(waves) do
+	for idx, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
-			copy_units(enemy_human, enemy_ai, wave_info.strength, new_distance - 8)
+			copy_units(enemy_human, enemy_ai, waves.strength(idx), new_distance - 8)
 		end
 	end
 end
@@ -113,7 +114,7 @@ for wave_index, wave_info in ipairs(waves) do
 			x = x,
 			y = wave_info.y,
 			color = green_to_red((wave_index) / #waves),
-			text = "____" .. wave_info.strength .. "%____",
+			text = "____" .. waves.strength(wave_index) .. "%____",
 		}
 	end
 end
