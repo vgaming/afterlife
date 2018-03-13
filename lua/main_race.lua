@@ -34,13 +34,15 @@ wesnoth.wml_actions.event {
 
 local waves = {
 	{ y = 41, strength = 10 },
-	{ y = 36, strength = 18 },
-	{ y = 31, strength = 26 },
-	{ y = 26, strength = 34 },
-	{ y = 21, strength = 42 },
-	{ y = 16, strength = 50 },
-	{ y = 11, strength = 58 },
-	{ y = 6, strength = 66 },
+	{ y = 38, strength = 16 },
+	{ y = 34, strength = 23 },
+	{ y = 30, strength = 30 },
+	{ y = 26, strength = 36 },
+	{ y = 22, strength = 43 },
+	{ y = 18, strength = 50 },
+	{ y = 14, strength = 56 },
+	{ y = 10, strength = 63 },
+	{ y = 6, strength = 70 },
 }
 
 local width, height, border = wesnoth.get_map_size()
@@ -64,7 +66,7 @@ local function generate_wave(side, enemy_human, enemy_ai)
 	print("side", side, "distance", new_distance)
 	for _, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
-			copy_units(enemy_human, enemy_ai, wave_info.strength, new_distance - 9)
+			copy_units(enemy_human, enemy_ai, wave_info.strength, new_distance - 8)
 		end
 	end
 end
