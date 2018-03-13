@@ -119,8 +119,6 @@ local function turn_refresh()
 end
 
 
---"85,255,0", "170,255,0", "255,255,0",
---"255,170,0", "255,85,0", "255,0,0"
 local function green_to_red(frac)
 	local red = math.min(255, math.ceil(frac * 2 * 255))
 	local green = math.min(255, math.ceil(255 * 2 - frac * 2 * 255))
