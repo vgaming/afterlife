@@ -73,10 +73,10 @@ local function generate_wave(side)
 	table.sort(units, function(a, b) return a.y > b.y end)
 	local new_distance = math.min(prev_distance, units[#units].y)
 	wesnoth.set_variable("afterlife_distance_" .. side, new_distance)
-	print("side", side, "distance", new_distance)
+	--print("side", side, "distance", new_distance)
 	for idx, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
-			copy_units(sides[side].enemy_human, sides[side].enemy_ai, waves.strength(idx), new_distance - 7)
+			copy_units(sides[side].enemy_human, sides[side].enemy_ai, waves.strength(idx), wave_info.y - 8)
 		end
 	end
 end
