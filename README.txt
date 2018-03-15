@@ -1,1 +1,1 @@
-doc/about.txt
+data/doc/about.txt

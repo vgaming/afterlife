@@ -1,4 +1,4 @@
 description() {
-	cat ./doc/about.txt
+	cat ./data/doc/about.txt
 	echo -e "\nPlaying time: ~ 25 minutes."
 }
