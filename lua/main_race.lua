@@ -76,7 +76,7 @@ local function generate_wave(side)
 	--print("side", side, "distance", new_distance)
 	for idx, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
-			copy_units(sides[side].enemy_human, sides[side].enemy_ai, waves.strength(idx), wave_info.y - 8)
+			copy_units(sides[side].enemy_human, sides[side].enemy_ai, waves.strength(idx), wave_info.y - 7)
 		end
 	end
 end
