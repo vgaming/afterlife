@@ -56,6 +56,7 @@ local waves = {
 }
 
 local width, height, border = wesnoth.get_map_size()
+local left_label, right_label = border + math.floor(width * 1 / 4), border + math.floor(width * 3 / 4)
 
 
 local function copy_units(from_side, to_side, copy_strength, y_min)
@@ -76,6 +77,11 @@ local function generate_wave(side)
 	--print("side", side, "distance", new_distance)
 	for idx, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
+			(wesnoth.label or wesnoth.wml_actions.label) {
+				x = side == human_side1 and left_label or right_label,
+				y = wave_info.y,
+				text = "",
+			}
 			copy_units(sides[side].enemy_human, sides[side].enemy_ai, waves.strength(idx), wave_info.y - 7)
 		end
 	end
@@ -130,7 +136,7 @@ local function green_to_red(frac)
 end
 
 for wave_index, wave_info in ipairs(waves) do
-	for _, x in ipairs { border + math.floor(width * 1 / 4), border + math.floor(width * 3 / 4) } do
+	for _, x in ipairs { left_label, right_label } do
 		(wesnoth.label or wesnoth.wml_actions.label) {
 			x = x,
 			y = wave_info.y,
