@@ -3,3 +3,6 @@ email="n1m5spm@yandex.com"
 author="Vasya N"
 icon="misc/blank-hex.png~BLIT(units/human-loyalists/spearman.png~CROP(20,0,31,72)~FL())~BLIT(units/human-loyalists/spearman.png~CROP(20,0,31,72)~GS(),36,0)"
 type="map_pack"
+[feedback]
+	topic_id=47827
+[/feedback]
