@@ -94,7 +94,6 @@ local function check_win(side)
 		and not wesnoth.wml_conditionals.has_unit { side = sides[side].enemy_ai } then
 		wesnoth.wml_actions.kill {
 			side = sides[side].enemy_human,
-			canrecruit = true,
 		}
 		if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.10") then
 			wesnoth.wml_actions.endlevel {
