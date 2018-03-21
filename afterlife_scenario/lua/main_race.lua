@@ -96,10 +96,12 @@ local function check_win(side)
 			side = sides[side].enemy_human,
 			canrecruit = true,
 		}
-		wesnoth.wml_actions.endlevel {
-			T.result { side = side, result = "victory" },
-			T.result { side = sides[side].enemy_human, result = "defeat" },
-		}
+		if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.10") then
+			wesnoth.wml_actions.endlevel {
+				T.result { side = side, result = "victory" },
+				T.result { side = sides[side].enemy_human, result = "defeat" },
+			}
+		end
 	end
 end
 
