@@ -32,13 +32,13 @@ wesnoth.wml_actions.event {
 	id = "afterlife_turn_refresh",
 	name = "turn refresh",
 	first_time_only = false,
-	T.lua { code = "afterlife.turn_refresh()" }
+	T.lua { code = "afterlife.turn_refresh_event()" }
 }
 wesnoth.wml_actions.event {
 	id = "afterlife_die",
 	name = "die",
 	first_time_only = false,
-	T.lua { code = "afterlife.die()" }
+	T.lua { code = "afterlife.die_event()" }
 }
 
 local waves = {
@@ -105,13 +105,13 @@ local function check_win(side)
 end
 
 
-local function die()
+local function die_event()
 	--print("die event", wesnoth.current.side, sides[wesnoth.current.side].half_owner)
 	check_win(sides[wesnoth.current.side].half_owner)
 end
 
 
-local function turn_refresh()
+local function turn_refresh_event()
 	if wesnoth.current.side == 1 then
 		generate_wave(human_side1)
 		generate_wave(human_side2)
@@ -151,7 +151,7 @@ wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it
 	.. "Name is \"Afterlife\".")
 
 
-afterlife.turn_refresh = turn_refresh
-afterlife.die = die
+afterlife.turn_refresh_event = turn_refresh_event
+afterlife.die_event = die_event
 
 -- >>
