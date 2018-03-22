@@ -17,17 +17,6 @@ local sides = {
 	[4] = { half_owner = 2},
 }
 
-for _, side in ipairs(wesnoth.sides) do
-	side.village_support = side.village_support + 1
-end
-
-wesnoth.wml_actions.kill {
-	canrecruit = true,
-	side = ai_side1 .. "," .. ai_side2,
-	fire_event = false,
-	animate = false,
-}
-
 wesnoth.wml_actions.event {
 	id = "afterlife_turn_refresh",
 	name = "turn refresh",
@@ -39,6 +28,12 @@ wesnoth.wml_actions.event {
 	name = "die",
 	first_time_only = false,
 	T.lua { code = "afterlife.die_event()" }
+}
+wesnoth.wml_actions.event {
+	id = "afterlife_prestart",
+	name = "prestart",
+	first_time_only = false,
+	T.lua { code = "afterlife.prestart_event()" }
 }
 
 local waves = {
@@ -105,9 +100,39 @@ local function check_win(side)
 end
 
 
-local function die_event()
-	--print("die event", wesnoth.current.side, sides[wesnoth.current.side].half_owner)
-	check_win(sides[wesnoth.current.side].half_owner)
+local function green_to_red(frac)
+	local red = math.min(255, math.ceil(frac * 2 * 255))
+	local green = math.min(255, math.ceil(255 * 2 - frac * 2 * 255))
+	if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.0") then
+		return {red, green, 0, 255}
+	else
+		return red .. "," .. green .. ",0"
+	end
+end
+
+
+function afterlife.prestart_event()
+	for _, side in ipairs(wesnoth.sides) do
+		side.village_support = side.village_support + 1
+	end
+	wesnoth.wml_actions.kill {
+		canrecruit = true,
+		side = ai_side1 .. "," .. ai_side2,
+		fire_event = false,
+		animate = false,
+	}
+	for wave_index, wave_info in ipairs(waves) do
+		for _, x in ipairs { left_label, right_label } do
+			(wesnoth.label or wesnoth.wml_actions.label) {
+				x = x,
+				y = wave_info.y,
+				color = green_to_red(wave_index / #waves),
+				text = "____" .. waves.strength(wave_index) .. "%____",
+			}
+		end
+	end
+	wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it. "
+		.. "Name is \"Afterlife\".")
 end
 
 
@@ -126,32 +151,15 @@ local function turn_refresh_event()
 end
 
 
-local function green_to_red(frac)
-	local red = math.min(255, math.ceil(frac * 2 * 255))
-	local green = math.min(255, math.ceil(255 * 2 - frac * 2 * 255))
-	if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.0") then
-		return {red, green, 0, 255}
-	else
-		return red .. "," .. green .. ",0"
-	end
+function afterlife.die_event()
+	--print("die event", wesnoth.current.side, sides[wesnoth.current.side].half_owner)
+	check_win(sides[wesnoth.current.side].half_owner)
 end
 
-for wave_index, wave_info in ipairs(waves) do
-	for _, x in ipairs { left_label, right_label } do
-		(wesnoth.label or wesnoth.wml_actions.label) {
-			x = x,
-			y = wave_info.y,
-			color = green_to_red((wave_index) / #waves),
-			text = "____" .. waves.strength(wave_index) .. "%____",
-		}
-	end
-end
+
 print("active mods:", wesnoth.game_config.mp_settings.active_mods)
-wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it. "
-	.. "Name is \"Afterlife\".")
 
 
 afterlife.turn_refresh_event = turn_refresh_event
-afterlife.die_event = die_event
 
 -- >>
