@@ -17,6 +17,12 @@ local copy_strength_increase = 2
 
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
+local sides = {
+	[1] = { enemy_human = 3, enemy_clone = 2, half_owner = 1 },
+	[2] = { half_owner = 1},
+	[3] = { enemy_human = 1, enemy_clone = 4, half_owner = 3 },
+	[4] = { half_owner = 2},
+}
 
 
 wesnoth.wml_actions.kill {
@@ -31,17 +37,19 @@ for _, side in ipairs(wesnoth.sides) do
 end
 
 wesnoth.wml_actions.event {
-	id = "afterlife_turn_refresh",
 	name = "turn refresh",
 	first_time_only = false,
 	T.lua { code = "afterlife.turn_refresh()" }
 }
+wesnoth.wml_actions.event {
+	name = "side turn end",
+	first_time_only = false,
+	T.lua { code = "afterlife.side_turn_end_event()" }
+}
 
 local function weaken_copies()
-	local target_side = wesnoth.current.side == human_side1 and ai_side1
-		or wesnoth.current.side == human_side2 and ai_side2
-	if target_side then
-		for _, unit in ipairs(wesnoth.get_units { side = target_side }) do
+	if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
+		for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side }) do
 			wesnoth.add_modification(unit, "object", {
 				T.effect { apply_to = "attack", increase_damage = "-50%" },
 				T.effect { apply_to = "hitpoints", increase = "1" },
@@ -71,8 +79,6 @@ function afterlife.turn_refresh()
 		if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
 			afterlife.unpetrify_units(is_givecontrol)
 		end
-	elseif is_givecontrol then
-		weaken_copies()
 	end
 	-- print("turn", wesnoth.current.turn, "side", wesnoth.current.side, "div", (wesnoth.current.turn - 2) % wave_length)
 	local next_wave_turn = wesnoth.current.turn
@@ -83,6 +89,12 @@ function afterlife.turn_refresh()
 		y = 2,
 		text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
 	}
+end
+
+function afterlife.side_turn_end_event()
+	if is_givecontrol and wesnoth.current.turn % wave_length == 0 then
+		weaken_copies()
+	end
 end
 
 

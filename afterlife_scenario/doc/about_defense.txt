@@ -2,4 +2,4 @@ Each two turns your units are copied to enemy part of the map.
 
 These copies get stronger every turn. Survive enemy waves longer than your opponent.
 
-Old copies get 50% weaker each wave if they are controlled by human (to avoid stacking them up).
+Old copies get 50% weaker each wave if they are controlled by human (to avoid stacking them up). If they have less than 4 max_hitpoints, they are killed and enemy gets 6 gold.
