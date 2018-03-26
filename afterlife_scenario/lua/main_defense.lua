@@ -37,6 +37,22 @@ wesnoth.wml_actions.event {
 	T.lua { code = "afterlife.turn_refresh()" }
 }
 
+local function weaken_copies()
+	local target_side = wesnoth.current.side == human_side1 and ai_side1
+		or wesnoth.current.side == human_side2 and ai_side2
+	if target_side then
+		for _, unit in ipairs(wesnoth.get_units { side = target_side }) do
+			wesnoth.add_modification(unit, "object", {
+				T.effect { apply_to = "attack", increase_damage = "-50%" },
+				T.effect { apply_to = "hitpoints", increase = "1" },
+				T.effect { apply_to = "hitpoints", increase_total = "1" },
+				T.effect { apply_to = "hitpoints", increase = "-50%" },
+				T.effect { apply_to = "hitpoints", increase_total = "-50%" },
+			})
+		end
+	end
+end
+
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local to_pos = afterlife.find_vacant(unit_original)
@@ -53,8 +69,10 @@ function afterlife.turn_refresh()
 			copy_units(human_side1, ai_side2)
 		end
 		if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
-			afterlife.release_wave(is_givecontrol)
+			afterlife.unpetrify_units(is_givecontrol)
 		end
+	elseif is_givecontrol then
+		weaken_copies()
 	end
 	-- print("turn", wesnoth.current.turn, "side", wesnoth.current.side, "div", (wesnoth.current.turn - 2) % wave_length)
 	local next_wave_turn = wesnoth.current.turn
