@@ -57,6 +57,11 @@ local function weaken_copies()
 				T.effect { apply_to = "hitpoints", increase = "-50%" },
 				T.effect { apply_to = "hitpoints", increase_total = "-50%" },
 			})
+			if unit.max_hitpoints <= 3 then
+				local gold_side = sides[wesnoth.current.side].half_owner
+				wesnoth.sides[gold_side].gold = wesnoth.sides[gold_side].gold + 6
+				wesnoth.wml_actions.kill { id = unit.id }
+			end
 		end
 	end
 end
