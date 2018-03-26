@@ -4,7 +4,6 @@ local wesnoth = wesnoth
 local afterlife = afterlife
 local ipairs = ipairs
 local string = string
-local math = math
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
