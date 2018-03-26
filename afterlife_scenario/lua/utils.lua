@@ -78,6 +78,8 @@ local function release_wave(reduce_already_existing)
 		elseif reduce_already_existing then
 			wesnoth.add_modification(unit, "object", {
 				T.effect { apply_to = "attack", increase_damage = "-50%" },
+				T.effect { apply_to = "hitpoints", increase = "1" },
+				T.effect { apply_to = "hitpoints", increase_total = "1" },
 				T.effect { apply_to = "hitpoints", increase = "-50%" },
 				T.effect { apply_to = "hitpoints", increase_total = "-50%" },
 			})
