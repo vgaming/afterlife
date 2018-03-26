@@ -2,4 +2,4 @@ Each two turns your units are copied to enemy part of the map.
 
 These copies get stronger every turn. Survive enemy waves longer than your opponent.
 
-If you enable ''Control copies'' setting, then old copies get weaker each wave (to avoid defensive strategy). If they have less than 3 HP, they disappear.
+Old copies get 50% weaker each wave if they are controlled by human (to avoid stacking them up).

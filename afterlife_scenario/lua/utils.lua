@@ -81,12 +81,6 @@ local function release_wave(reduce_already_existing)
 				T.effect { apply_to = "hitpoints", increase = "-50%" },
 				T.effect { apply_to = "hitpoints", increase_total = "-50%" },
 			})
-			print("unit_hp", unit.hitpoints)
-			if unit.hitpoints <= 3 then
-				wesnoth.wml_actions.kill {
-					id = unit.id,
-				}
-			end
 		end
 	end
 end
