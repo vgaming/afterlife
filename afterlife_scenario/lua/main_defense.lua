@@ -35,26 +35,12 @@ wesnoth.wml_actions.event {
 	first_time_only = false,
 	T.lua { code = "afterlife.turn_refresh()" }
 }
-
-if wesnoth.get_variable("afterlife_givecontrol") then
-	print("enabling givecontrol rules...")
-	wesnoth.wml_actions.event {
-		id = "afterlife_side_turn",
-		name = "side turn",
-		first_time_only = false,
-		T.lua { code = "afterlife.side_turn_event()" }
-	}
-	function afterlife.side_turn_event()
-		if wesnoth.current.side == human_side1 then
-			wesnoth.sides[ai_side2].controller = "null"
-			wesnoth.sides[ai_side2].controller = "human"
-		elseif wesnoth.current.side == human_side2 then
-			wesnoth.sides[ai_side1].controller = "null"
-			wesnoth.sides[ai_side1].controller = "human"
-		end
-	end
-end
-
+wesnoth.wml_actions.event {
+	id = "afterlife_side_turn",
+	name = "side turn",
+	first_time_only = false,
+	T.lua { code = "afterlife.side_turn_event()" }
+}
 
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
@@ -87,6 +73,20 @@ function afterlife.turn_refresh()
 		y = 2,
 		text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
 	}
+end
+
+
+function afterlife.side_turn_event()
+	if wesnoth.get_variable("afterlife_givecontrol") then
+		print("applying givecontrol...")
+		if wesnoth.current.side == human_side1 then
+			wesnoth.sides[ai_side2].controller = "null"
+			wesnoth.sides[ai_side2].controller = "human"
+		elseif wesnoth.current.side == human_side2 then
+			wesnoth.sides[ai_side1].controller = "null"
+			wesnoth.sides[ai_side1].controller = "human"
+		end
+	end
 end
 
 
