@@ -147,7 +147,7 @@ local function turn_refresh_event()
 	if wesnoth.current.side == human_side1 then
 		check_win(human_side2)
 	end
-	afterlife.unpetrify_units()
+	afterlife.release_wave()
 end
 
 

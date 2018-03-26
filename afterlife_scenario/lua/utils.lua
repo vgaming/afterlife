@@ -70,11 +70,21 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 end
 
 
-local function unpetrify_units()
-	for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side, status = "petrified" }) do
+local function release_wave(reduce_already_existing)
+	for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side }) do
 		if unit.variables.afterlife_petrified then
 			unit.status.petrified = false
 			unit.variables.afterlife_petrified = nil
+		elseif reduce_already_existing then
+			wesnoth.add_modification(unit, "object", {
+				T.effect { apply_to = "attack", increase_damage = "50%" },
+				T.effect { apply_to = "hitpoints", increase_total = "50%" },
+			})
+			if unit.max_hitpoints <= 3 then
+				wesnoth.wml_actions.kill {
+					id = unit.id,
+				}
+			end
 		end
 	end
 end
@@ -107,7 +117,7 @@ end
 
 
 afterlife.copy_unit = copy_unit
-afterlife.unpetrify_units = unpetrify_units
+afterlife.release_wave = release_wave
 afterlife.find_vacant = find_vacant
 
 -- >>

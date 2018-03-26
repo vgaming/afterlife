@@ -1,3 +1,0 @@
-Each two turns your units are copied to enemy part of the map to be controlled by AI.
-
-These copies get stronger every turn. Survive enemy waves longer than your opponent.
