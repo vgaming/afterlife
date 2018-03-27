@@ -1,0 +1,3 @@
+Each two turns your units are copied to enemy part of the map.
+
+New copies get stronger every turn. However, old copies get 50% weaker each wave to avoid stacking them up. If a copy has 3 max_hitpoints or less, it is killed and enemy gets 6 gold.
