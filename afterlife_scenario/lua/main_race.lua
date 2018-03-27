@@ -8,29 +8,26 @@ local table = table
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
-local human_side1, human_side2 = 1,3
-local ai_side1, ai_side2 = 2,4
+local human_side1, human_side2 = 1, 3
+local ai_side1, ai_side2 = 2, 4
 local sides = {
 	[1] = { enemy_human = 3, enemy_ai = 2, half_owner = 1 },
-	[2] = { half_owner = 1},
+	[2] = { half_owner = 1 },
 	[3] = { enemy_human = 1, enemy_ai = 4, half_owner = 3 },
-	[4] = { half_owner = 2},
+	[4] = { half_owner = 2 },
 }
 
 wesnoth.wml_actions.event {
-	id = "afterlife_turn_refresh",
 	name = "turn refresh",
 	first_time_only = false,
 	T.lua { code = "afterlife.turn_refresh_event()" }
 }
 wesnoth.wml_actions.event {
-	id = "afterlife_die",
 	name = "die",
 	first_time_only = false,
 	T.lua { code = "afterlife.die_event()" }
 }
 wesnoth.wml_actions.event {
-	id = "afterlife_prestart",
 	name = "prestart",
 	first_time_only = false,
 	T.lua { code = "afterlife.prestart_event()" }
@@ -104,7 +101,7 @@ local function green_to_red(frac)
 	local red = math.min(255, math.ceil(frac * 2 * 255))
 	local green = math.min(255, math.ceil(255 * 2 - frac * 2 * 255))
 	if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.0") then
-		return {red, green, 0, 255}
+		return { red, green, 0, 255 }
 	else
 		return red .. "," .. green .. ",0"
 	end
