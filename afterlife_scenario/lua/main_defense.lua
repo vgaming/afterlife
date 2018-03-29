@@ -7,7 +7,8 @@ local string = string
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
-local is_givecontrol = wesnoth.sides[2].hidden == false
+local is_givecontrol = wesnoth.sides[2].__cfg.allow_player == false
+print("afterlife is_givecontrol", is_givecontrol)
 
 local wave_length = 2  -- also change: experience_modifier in _main.cfg, text in about.txt
 local copy_strength_start = 32 -- point of no return is about 50%
@@ -80,7 +81,7 @@ function afterlife.turn_refresh()
 			copy_units(human_side1, ai_side2)
 		end
 		if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
-			afterlife.unpetrify_units(is_givecontrol)
+			afterlife.unpetrify_units()
 		end
 	end
 	-- print("turn", wesnoth.current.turn, "side", wesnoth.current.side, "div", (wesnoth.current.turn - 2) % wave_length)
