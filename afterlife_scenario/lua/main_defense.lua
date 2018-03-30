@@ -7,9 +7,6 @@ local string = string
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
-local is_givecontrol = wesnoth.sides[2].__cfg.allow_player == false
-print("afterlife is_givecontrol", is_givecontrol)
-
 local wave_length = 2  -- also change: experience_modifier in _main.cfg, text in about.txt
 local copy_strength_start = 32 -- point of no return is about 50%
 local copy_strength_increase = 2
@@ -23,6 +20,8 @@ local sides = {
 	[3] = { enemy_human = 1, enemy_clone = 4, half_owner = 3 },
 	[4] = { half_owner = 2},
 }
+local is_givecontrol = wesnoth.sides[ai_side1].__cfg.allow_player
+print("afterlife is_givecontrol", is_givecontrol, wesnoth.sides[ai_side1].__cfg.allow_player)
 
 
 wesnoth.wml_actions.kill {
