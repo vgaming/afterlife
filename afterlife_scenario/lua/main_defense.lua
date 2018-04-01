@@ -1,4 +1,4 @@
--- << afterlife_main
+-- << afterlife/main_defense
 
 local wesnoth = wesnoth
 local afterlife = afterlife
