@@ -51,8 +51,11 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 	unit.side = to_side
 	unit.status.poisoned = false
 	unit.status.slowed = false
-	unit.status.petrified = true
-	unit.variables.afterlife_petrified = true
+	unit.status.petrified = wesnoth.compare_versions(wesnoth.game_config.version, "<", "1.13.6")
+		and true or false
+	unit.status.invulnerable = wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.6")
+		and true or false
+	unit.variables.afterlife_fresh_copy = true
 	unit.moves = unit.max_moves
 
 	local increase_percent = strength_percent - 100
@@ -71,10 +74,14 @@ end
 
 
 local function unpetrify_units()
-	for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side, status = "petrified" }) do
-		if unit.variables.afterlife_petrified then
+	local status_filter = wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.6")
+		and "invulnerable" or "petrified"
+	local filtered_units = wesnoth.get_units { side = wesnoth.current.side, status = status_filter }
+	for _, unit in ipairs(filtered_units) do
+		if unit.variables.afterlife_fresh_copy then
 			unit.status.petrified = false
-			unit.variables.afterlife_petrified = nil
+			unit.status.invulnerable = false
+			unit.variables.afterlife_fresh_copy = nil
 		end
 	end
 end
