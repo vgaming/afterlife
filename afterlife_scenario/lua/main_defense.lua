@@ -66,9 +66,17 @@ end
 
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
-		local to_pos = afterlife.find_vacant(unit_original)
 		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
-		afterlife.copy_unit(unit_original, to_pos, to_side, percent)
+		local to_pos = afterlife.find_vacant(unit_original)
+		if to_pos == nil then
+			wesnoth.wml_actions.message {
+				speaker = "narrator",
+				message = "No free space to place a copy",
+			}
+			afterlife.endlevel_winner(from_side, sides[from_side].enemy_human)
+		else
+			afterlife.copy_unit(unit_original, to_pos, to_side, percent)
+		end
 	end
 end
 

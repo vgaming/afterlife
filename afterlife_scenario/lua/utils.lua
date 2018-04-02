@@ -44,7 +44,7 @@ end
 
 
 local function copy_unit(unit_original, to_pos, to_side, strength_percent)
-	if to_pos == nil or to_pos.x == nil then return end
+	if to_pos == nil then return end
 	local from_side = unit_original.side
 	local new_id = unit_wml_transform(unit_original, to_pos.x, to_pos.y)
 	local unit = wesnoth.get_units { id = new_id }[1]
@@ -113,6 +113,22 @@ local function find_vacant(unit, y_min)
 end
 
 
+local function side_is_local(side)
+	return wesnoth.sides[side].controller == "human" and wesnoth.sides[side].is_local ~= false
+end
+
+local function endlevel_winner(winner, loser)
+	wesnoth.wml_actions.kill {
+		side = loser,
+	}
+	local is_win = side_is_local(winner) or not side_is_local(loser)
+	wesnoth.wml_actions.endlevel {
+		result = is_win and "victory" or "defeat"
+	}
+end
+
+
+afterlife.endlevel_winner = endlevel_winner
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
 afterlife.find_vacant = find_vacant
