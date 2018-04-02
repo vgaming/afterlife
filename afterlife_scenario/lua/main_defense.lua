@@ -74,6 +74,7 @@ local function copy_units(from_side, to_side)
 				message = "No free space to place a copy",
 			}
 			afterlife.endlevel_winner(from_side, sides[from_side].enemy_human)
+			break
 		else
 			afterlife.copy_unit(unit_original, to_pos, to_side, percent)
 		end
