@@ -34,17 +34,6 @@ wesnoth.wml_actions.event {
 }
 
 local waves = {
-	{ y = 41 }, -- 1
-	{ y = 38 },
-	{ y = 34 },
-	{ y = 30 },
-	{ y = 26 },
-	{ y = 22 },
-	{ y = 18 },
-	{ y = 14 },
-	{ y = 10 },
-	{ y = 6 }, -- 10
-	strength = function(idx) return 40 + idx * 3 end
 }
 
 local width, height, border = wesnoth.get_map_size()
@@ -110,6 +99,12 @@ function afterlife.prestart_event()
 		fire_event = false,
 		animate = false,
 	}
+	local wave_count = wesnoth.get_variable("afterlife_wave_count") or 10
+	for idx = 0, wave_count - 1 do
+		local y = math.floor(41 - 35 * idx / (wave_count - 1) + 0.5)
+		waves[#waves + 1] = { y = y }
+	end
+	waves.strength = function(idx) return math.floor(40 + 30 * (idx - 1) / (#waves - 1) + 0.5) end
 	for wave_index, wave_info in ipairs(waves) do
 		for _, x in ipairs { left_label, right_label } do
 			(wesnoth.label or wesnoth.wml_actions.label) {
