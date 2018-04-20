@@ -99,7 +99,8 @@ function afterlife.prestart_event()
 		fire_event = false,
 		animate = false,
 	}
-	local wave_count = wesnoth.get_variable("afterlife_wave_count") or 10
+	local wave_count = wesnoth.get_variable("afterlife_wave_count")
+		or 12 -- also change default in WML
 	for idx = 0, wave_count - 1 do
 		local y = math.floor(41 - 35 * idx / (wave_count - 1) + 0.5)
 		waves[#waves + 1] = { y = y }
