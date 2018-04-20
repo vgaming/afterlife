@@ -41,7 +41,7 @@ local left_label, right_label = border + math.floor(width * 1 / 4), border + mat
 
 
 local function copy_units(from_side, to_side, copy_strength, y_min)
-	print("making wave", from_side, to_side, copy_strength, y_min)
+	--print("generating wave", from_side, to_side, copy_strength, y_min)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local to_pos = afterlife.find_vacant(unit_original, y_min)
 		afterlife.copy_unit(unit_original, to_pos, to_side, copy_strength)
