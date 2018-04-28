@@ -107,6 +107,9 @@ function afterlife.side_turn_end_event()
 	if is_givecontrol and wesnoth.current.turn % wave_length == 0 then
 		weaken_copies()
 	end
+	for _, unit in ipairs(wesnoth.get_units { canrecruit = true, side = wesnoth.current.side }) do
+		unit.status.uncovered = true
+	end
 end
 
 
