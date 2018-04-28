@@ -3,3 +3,6 @@ target/
 
 #### passphrase
 /.build/.passphrase
+
+#### wesnoth_addon_manager
+/packet.dump
