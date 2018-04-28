@@ -15,10 +15,10 @@ local copy_strength_increase = 2
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
 local sides = {
-	[1] = { enemy_human = 3, enemy_clone = 2, half_owner = 1 },
-	[2] = { half_owner = 1},
-	[3] = { enemy_human = 1, enemy_clone = 4, half_owner = 3 },
-	[4] = { half_owner = 2},
+	[1] = { enemy_human = 3, enemy_clone = 2, half_owner = 1, is_human = true },
+	[2] = { half_owner = 1, is_human = false },
+	[3] = { enemy_human = 1, enemy_clone = 4, half_owner = 3, is_human = true },
+	[4] = { half_owner = 2, is_human = false },
 }
 local is_givecontrol = wesnoth.sides[ai_side1].__cfg.allow_player
 print("afterlife is_givecontrol", is_givecontrol, wesnoth.sides[ai_side1].__cfg.allow_player)
@@ -46,7 +46,7 @@ wesnoth.wml_actions.event {
 }
 
 local function weaken_copies()
-	if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
+	if sides[wesnoth.current.side].is_human == false then
 		for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side }) do
 			wesnoth.add_modification(unit, "object", {
 				T.effect { apply_to = "attack", increase_damage = "-50%" },
@@ -88,7 +88,7 @@ function afterlife.turn_refresh()
 			copy_units(human_side2, ai_side1)
 			copy_units(human_side1, ai_side2)
 		end
-		if wesnoth.current.side == ai_side1 or wesnoth.current.side == ai_side2 then
+		if sides[wesnoth.current.side].is_human == false then
 			afterlife.unpetrify_units()
 		end
 	end
