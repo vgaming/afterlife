@@ -142,7 +142,8 @@ function afterlife.die_event()
 end
 
 
-print("active mods:", wesnoth.game_config.mp_settings.active_mods)
+print("wave count:", wesnoth.get_variable("afterlife_wave_count"),
+	"active mods:", wesnoth.game_config.mp_settings.active_mods)
 
 
 afterlife.turn_refresh_event = turn_refresh_event
