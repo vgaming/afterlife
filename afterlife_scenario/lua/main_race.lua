@@ -33,8 +33,14 @@ wesnoth.wml_actions.event {
 	T.lua { code = "afterlife.prestart_event()" }
 }
 
-local waves = {
-}
+local waves = {}
+local wave_count = wesnoth.get_variable("afterlife_wave_count")
+	or 12 -- also change default in WML
+for idx = 0, wave_count - 1 do
+	local y = math.floor(41 - 35 * idx / (wave_count - 1) + 0.5)
+	waves[#waves + 1] = { y = y }
+end
+waves.strength = function(idx) return math.floor(40 + 30 * (idx - 1) / (#waves - 1) + 0.5) end
 
 local width, height, border = wesnoth.get_map_size()
 local left_label, right_label = border + math.floor(width * 1 / 4), border + math.floor(width * 3 / 4)
@@ -99,13 +105,6 @@ function afterlife.prestart_event()
 		fire_event = false,
 		animate = false,
 	}
-	local wave_count = wesnoth.get_variable("afterlife_wave_count")
-		or 12 -- also change default in WML
-	for idx = 0, wave_count - 1 do
-		local y = math.floor(41 - 35 * idx / (wave_count - 1) + 0.5)
-		waves[#waves + 1] = { y = y }
-	end
-	waves.strength = function(idx) return math.floor(40 + 30 * (idx - 1) / (#waves - 1) + 0.5) end
 	for wave_index, wave_info in ipairs(waves) do
 		for _, x in ipairs { left_label, right_label } do
 			(wesnoth.label or wesnoth.wml_actions.label) {
