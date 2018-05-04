@@ -20,8 +20,6 @@ local sides = {
 	[3] = { enemy_human = 1, enemy_clone = 4, half_owner = 3, is_human = true },
 	[4] = { half_owner = 2, is_human = false },
 }
-local is_givecontrol = wesnoth.sides[ai_side1].__cfg.allow_player
-print("afterlife is_givecontrol", is_givecontrol, wesnoth.sides[ai_side1].__cfg.allow_player)
 
 
 wesnoth.wml_actions.kill {
@@ -45,24 +43,6 @@ wesnoth.wml_actions.event {
 	T.lua { code = "afterlife.side_turn_end_event()" }
 }
 
-local function weaken_copies()
-	if sides[wesnoth.current.side].is_human == false then
-		for _, unit in ipairs(wesnoth.get_units { side = wesnoth.current.side }) do
-			wesnoth.add_modification(unit, "object", {
-				T.effect { apply_to = "attack", increase_damage = "-50%" },
-				T.effect { apply_to = "hitpoints", increase = "1" },
-				T.effect { apply_to = "hitpoints", increase_total = "1" },
-				T.effect { apply_to = "hitpoints", increase = "-50%" },
-				T.effect { apply_to = "hitpoints", increase_total = "-50%" },
-			})
-			if unit.max_hitpoints <= 3 then
-				local gold_side = sides[wesnoth.current.side].half_owner
-				wesnoth.sides[gold_side].gold = wesnoth.sides[gold_side].gold + 6
-				wesnoth.wml_actions.kill { id = unit.id }
-			end
-		end
-	end
-end
 
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
@@ -104,9 +84,6 @@ function afterlife.turn_refresh()
 end
 
 function afterlife.side_turn_end_event()
-	if is_givecontrol and wesnoth.current.turn % wave_length == 0 then
-		weaken_copies()
-	end
 	for _, unit in ipairs(wesnoth.get_units { canrecruit = true, side = wesnoth.current.side }) do
 		unit.status.uncovered = true
 	end
