@@ -115,8 +115,6 @@ function afterlife.prestart_event()
 			}
 		end
 	end
-	wesnoth.message("Afterlife", "If you('ll) like the map, feel free to download it. "
-		.. "Name is \"Afterlife\".")
 end
 
 
@@ -141,8 +139,7 @@ function afterlife.die_event()
 end
 
 
-print("wave count:", wesnoth.get_variable("afterlife_wave_count"),
-	"active mods:", wesnoth.game_config.mp_settings.active_mods)
+print("wave count:", wesnoth.get_variable("afterlife_wave_count"))
 
 
 afterlife.turn_refresh_event = turn_refresh_event

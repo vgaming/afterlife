@@ -128,6 +128,14 @@ local function endlevel_winner(winner, loser)
 end
 
 
+print("active mods:", wesnoth.game_config.mp_settings.active_mods)
+wesnoth.wml_actions.event {
+	name = "side 1 turn 1 refresh",
+	T.lua { code = [[wesnoth.message("Afterlife",
+	"If you('ll) like the map, feel free to download it. Name is \"Afterlife\".")]] }
+}
+
+
 afterlife.endlevel_winner = endlevel_winner
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
