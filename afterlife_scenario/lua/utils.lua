@@ -45,6 +45,7 @@ end
 
 local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 	if to_pos == nil then return end
+	if unit_original.type == "Fog Clearer" then return end
 	local from_side = unit_original.side
 	local new_id = unit_wml_transform(unit_original, to_pos.x, to_pos.y)
 	local unit = wesnoth.get_units { id = new_id }[1]

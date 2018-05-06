@@ -55,7 +55,7 @@ local function copy_units(from_side, to_side)
 			}
 			afterlife.endlevel_winner(from_side, sides[from_side].enemy_human)
 			break
-		elseif unit_original.type ~= "Fog Clearer" then
+		else
 			afterlife.copy_unit(unit_original, to_pos, to_side, percent)
 		end
 	end
