@@ -94,7 +94,7 @@ local left_right = border + half - 1
 local right_left = border + half + 1
 local right_right = border + width - 1
 
-local function find_vacant(unit, y_min)
+function afterlife.find_vacant(unit, y_min, honor_edge)
 	y_min = y_min or border
 	y_min = math.max(border, y_min)
 	local x_start = unit.side == 1 and right_left or left_right
@@ -102,7 +102,7 @@ local function find_vacant(unit, y_min)
 	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
 	for y = y_min, height do
 		for x = x_start, x_end, x_step do
-			local is_edge = y == y_min and x == x_start
+			local is_edge = honor_edge and y == y_min and x == x_start
 			if wesnoth.wml_conditionals.has_unit { x = x, y = y } == false
 				and wesnoth.get_terrain(x, y) ~= "Xv"
 				and not is_edge then
@@ -139,6 +139,5 @@ wesnoth.wml_actions.event {
 afterlife.endlevel_winner = endlevel_winner
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
-afterlife.find_vacant = find_vacant
 
 -- >>

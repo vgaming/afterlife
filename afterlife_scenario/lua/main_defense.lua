@@ -47,7 +47,7 @@ wesnoth.wml_actions.event {
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
-		local to_pos = afterlife.find_vacant(unit_original)
+		local to_pos = afterlife.find_vacant(unit_original, nil, true)
 		if to_pos == nil then
 			wesnoth.wml_actions.message {
 				speaker = "narrator",
