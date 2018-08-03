@@ -1,6 +1,6 @@
 not_pushed_ignore=true
 
-versions=(14)
+upload_to_wesnoth_versions=(1.14)
 
 description() {
 	cat ./afterlife_scenario/doc/about.txt
