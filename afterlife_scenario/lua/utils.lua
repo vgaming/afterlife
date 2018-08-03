@@ -20,7 +20,7 @@ wesnoth.wml_conditionals.has_unit = wesnoth.wml_conditionals.has_unit or functio
 end
 
 
-local function unit_wml_transform(unit_userdata, x, y)
+local function unit_wml_copy(unit_userdata, x, y)
 	wesnoth.wml_actions.store_unit {
 		T.filter { id = unit_userdata.id },
 		variable = "afterlife_unit",
@@ -47,7 +47,7 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 	if to_pos == nil then return end
 	if unit_original.type == "Fog Clearer" then return end
 	local from_side = unit_original.side
-	local new_id = unit_wml_transform(unit_original, to_pos.x, to_pos.y)
+	local new_id = unit_wml_copy(unit_original, to_pos.x, to_pos.y)
 	local unit = wesnoth.get_units { id = new_id }[1]
 	unit.side = to_side
 	unit.status.poisoned = false

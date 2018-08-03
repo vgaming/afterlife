@@ -34,10 +34,11 @@ wesnoth.wml_actions.event {
 }
 
 local waves = {}
-local wave_count = wesnoth.get_variable("afterlife_wave_count")
+local wave_count = wesnoth.get_variable("afterlife_wave_count_") -- added a trailing _ to reset settings
 	or 12 -- also change default in WML
 for idx = 0, wave_count - 1 do
-	local y = math.floor(41 - 35 * idx / (wave_count - 1) + 0.5)
+	local step = wave_count > 12 and 35 / (wave_count - 1) or 35 / 11
+	local y = math.floor(41 - idx * step + 0.5)
 	waves[#waves + 1] = { y = y }
 end
 waves.strength = function(idx) return math.floor(40 + 30 * (idx - 1) / (#waves - 1) + 0.5) end
