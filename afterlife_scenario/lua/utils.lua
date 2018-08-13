@@ -54,17 +54,13 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 	unit.status.slowed = false
 	unit.variables.afterlife_fresh_copy = true
 	unit.moves = unit.max_moves
-	if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.6") then
-		wesnoth.add_modification(unit, "object", {
-			id = "afterlife_grayscale",
-			T.effect { apply_to = "image_mod", add="GS()" },
-			T.effect { apply_to = "zoc", value = false },
-		})
-		unit.status.petrified = false
-		unit.status.invulnerable = true
-	else
-		unit.status.petrified = true
-	end
+	wesnoth.add_modification(unit, "object", {
+		id = "afterlife_grayscale",
+		T.effect { apply_to = "image_mod", add="GS()" },
+		T.effect { apply_to = "zoc", value = false },
+	})
+	unit.status.petrified = false
+	unit.status.invulnerable = true
 
 	local increase_percent = strength_percent - 100
 	local ability = T.name_only {
@@ -82,24 +78,21 @@ end
 
 
 local function unpetrify_units()
-	local status_filter = wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.6")
-		and "invulnerable" or "petrified"
+	local status_filter = "invulnerable"
 	local filtered_units = wesnoth.get_units { side = wesnoth.current.side, status = status_filter }
 	for _, unit in ipairs(filtered_units) do
 		if unit.variables.afterlife_fresh_copy then
 			unit.status.petrified = false
 			unit.status.invulnerable = false
 			unit.variables.afterlife_fresh_copy = nil
-			if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.6") then
-				wesnoth.wml_actions.remove_object {
-					id = unit.id,
-					object_id = "afterlife_grayscale",
-				}
-				local img = string.gsub(unit.image_mods, "GS%(%)$", "NOP()", 1)
-				wesnoth.add_modification(unit, "object", {
-					T.effect { apply_to = "image_mod", replace = img },
-				})
-			end
+			wesnoth.wml_actions.remove_object {
+				id = unit.id,
+				object_id = "afterlife_grayscale",
+			}
+			local img = string.gsub(unit.image_mods, "GS%(%)$", "NOP()", 1)
+			wesnoth.add_modification(unit, "object", {
+				T.effect { apply_to = "image_mod", replace = img },
+			})
 		end
 	end
 end

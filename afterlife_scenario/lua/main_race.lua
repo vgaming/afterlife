@@ -93,11 +93,7 @@ end
 local function green_to_red(frac)
 	local red = math.min(255, math.ceil(frac * 2 * 255))
 	local green = math.min(255, math.ceil(255 * 2 - frac * 2 * 255))
-	if wesnoth.compare_versions(wesnoth.game_config.version, ">=", "1.13.0") then
-		return { red, green, 0, 255 }
-	else
-		return red .. "," .. green .. ",0"
-	end
+	return { red, green, 0, 255 }
 end
 
 
