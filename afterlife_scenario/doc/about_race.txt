@@ -1,4 +1,4 @@
-Enemy waves spawn each time you pass a new barrier.
+Waves spawn each time you pass a ___N0%___ label.
 
 A wave consists of enemy units copied and controlled by AI. The higher the barrier, the stronger the copies.
 
