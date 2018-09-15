@@ -1,0 +1,1 @@
+misc/blank-hex.png~BLIT(units/human-loyalists/spearman.png~CROP(20,0,31,72)~FL())~BLIT(units/human-loyalists/spearman.png~CROP(20,0,31,72)~GS(),36,0)
