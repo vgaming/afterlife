@@ -4,6 +4,7 @@ local wesnoth = wesnoth
 local afterlife = afterlife
 local ipairs = ipairs
 local string = string
+local on_event = wesnoth.require("lua/on_event.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
@@ -21,13 +22,15 @@ local sides = {
 	[4] = { half_owner = 2, is_human = false },
 }
 
+on_event("start", function()
+	wesnoth.wml_actions.kill {
+		canrecruit = true,
+		side = ai_side1 .. "," .. ai_side2,
+		fire_event = false,
+		animate = false,
+	}
+end)
 
-wesnoth.wml_actions.kill {
-	canrecruit = true,
-	side = ai_side1 .. "," .. ai_side2,
-	fire_event = false,
-	animate = false,
-}
 for _, side in ipairs(wesnoth.sides) do
 	side.village_support = side.village_support + 2
 end
