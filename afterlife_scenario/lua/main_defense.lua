@@ -15,21 +15,17 @@ local copy_strength_increase = 2
 
 local human_side1, human_side2 = 1,3
 local ai_side1, ai_side2 = 2,4
-local sides = {
-	[1] = { enemy_human = 3, enemy_clone = 2, half_owner = 1, is_human = true },
-	[2] = { half_owner = 1, is_human = false },
-	[3] = { enemy_human = 1, enemy_clone = 4, half_owner = 3, is_human = true },
-	[4] = { half_owner = 2, is_human = false },
-}
 
 on_event("start", function()
-	wesnoth.wml_actions.kill {
-		canrecruit = true,
-		side = ai_side1 .. "," .. ai_side2,
-		fire_event = false,
-		animate = false,
-	}
 	for _, side in ipairs(wesnoth.sides) do
+		if side.__cfg.allow_player == false then
+			wesnoth.wml_actions.kill {
+				canrecruit = true,
+				side = side.side,
+				fire_event = false,
+				animate = false,
+			}
+		end
 		side.village_support = side.village_support + 2
 	end
 end)
