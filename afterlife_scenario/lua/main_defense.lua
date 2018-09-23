@@ -29,23 +29,10 @@ on_event("start", function()
 		fire_event = false,
 		animate = false,
 	}
+	for _, side in ipairs(wesnoth.sides) do
+		side.village_support = side.village_support + 2
+	end
 end)
-
-for _, side in ipairs(wesnoth.sides) do
-	side.village_support = side.village_support + 2
-end
-
-wesnoth.wml_actions.event {
-	name = "turn refresh",
-	first_time_only = false,
-	T.lua { code = "afterlife.turn_refresh()" }
-}
-wesnoth.wml_actions.event {
-	name = "side turn end",
-	first_time_only = false,
-	T.lua { code = "afterlife.side_turn_end_event()" }
-}
-
 
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
@@ -56,7 +43,7 @@ local function copy_units(from_side, to_side)
 				speaker = "narrator",
 				message = "No free space to place a copy",
 			}
-			afterlife.endlevel_winner(from_side, sides[from_side].enemy_human)
+			afterlife.endlevel_team(from_side, wesnoth.sides[from_side].team_name)
 			break
 		else
 			afterlife.copy_unit(unit_original, to_pos, to_side, percent)
@@ -64,14 +51,13 @@ local function copy_units(from_side, to_side)
 	end
 end
 
-
-function afterlife.turn_refresh()
+on_event("turn refresh", function()
 	if wesnoth.current.turn % wave_length == 1 then
 		if wesnoth.current.side == 1 then
 			copy_units(human_side2, ai_side1)
 			copy_units(human_side1, ai_side2)
 		end
-		if sides[wesnoth.current.side].is_human == false then
+		if wesnoth.sides[wesnoth.current.side].__cfg.allow_player == false then
 			afterlife.unpetrify_units()
 		end
 	end
@@ -84,13 +70,13 @@ function afterlife.turn_refresh()
 		y = 2,
 		text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
 	}
-end
+end)
 
-function afterlife.side_turn_end_event()
+on_event("side turn end", function()
 	for _, unit in ipairs(wesnoth.get_units { canrecruit = true, side = wesnoth.current.side }) do
 		unit.status.uncovered = true
 	end
-end
+end)
 
 
 -- >>

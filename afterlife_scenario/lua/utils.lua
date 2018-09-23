@@ -125,17 +125,21 @@ function afterlife.find_vacant(unit, y_min, honor_edge)
 end
 
 
-local function side_is_local(side)
-	return wesnoth.sides[side].controller == "human" and wesnoth.sides[side].is_local ~= false
-end
+local function endlevel_team(winner_team)
+	local i_am_winner = false
+	for _, side in ipairs(wesnoth.sides) do
+		if side.team_name ~= winner_team and side.__cfg.allow_player == true then
+			wesnoth.wml_actions.kill {
+				side = side.side,
+			}
+		end
+		if side.team_name == winner_team and side.__cfg.allow_player == true and wesnoth.sides[side].is_local then
+			i_am_winner = true
+		end
+	end
 
-local function endlevel_winner(winner, loser)
-	wesnoth.wml_actions.kill {
-		side = loser,
-	}
-	local is_win = side_is_local(winner) or not side_is_local(loser)
 	wesnoth.wml_actions.endlevel {
-		result = is_win and "victory" or "defeat"
+		result = i_am_winner and "victory" or "defeat"
 	}
 end
 
@@ -143,7 +147,7 @@ end
 print("active mods:", wesnoth.game_config.mp_settings.active_mods)
 
 
-afterlife.endlevel_winner = endlevel_winner
+afterlife.endlevel_team = endlevel_team
 afterlife.copy_unit = copy_unit
 afterlife.unpetrify_units = unpetrify_units
 

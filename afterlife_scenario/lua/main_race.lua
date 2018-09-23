@@ -85,7 +85,7 @@ local function check_win(side)
 	if (side == human_side1 or side == human_side2)
 		and wesnoth.get_variable("afterlife_distance_" .. side) <= waves[#waves].y
 		and not wesnoth.wml_conditionals.has_unit { side = sides[side].enemy_ai } then
-		afterlife.endlevel_winner(side, sides[side].enemy_human)
+		afterlife.endlevel_team(wesnoth.sides[side].team_name)
 	end
 end
 
