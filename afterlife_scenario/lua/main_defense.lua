@@ -3,13 +3,14 @@
 local wesnoth = wesnoth
 local afterlife = afterlife
 local ipairs = ipairs
+local math = math
 local string = string
 local wml = wml
 local on_event = wesnoth.require("lua/on_event.lua")
 
 
 local wave_length = #wesnoth.sides == 4 and 2 or 1  -- also change: experience_modifier in _main.cfg, text in about.txt
-local copy_strength_start = 32 -- point of no return is about 50%
+local copy_strength_start = wave_length == 2 and 32 or 24 -- point of no return is about 50%
 local copy_strength_increase = 2
 local teams = { West = { enemy = "East", humans = {} }, East = { enemy = "West", humans = {} } }
 for _, side in ipairs(wesnoth.sides) do
@@ -72,7 +73,7 @@ on_event("turn refresh", function()
 		- (wesnoth.current.turn - 2) % wave_length
 		+ wave_length - 1
 	wesnoth.wml_actions.label {
-		x = 8,
+		x = math.ceil(wesnoth.get_map_size() / 2),
 		y = 2,
 		text = string.format("<span color='#FFFFFF'>Next wave:\n    turn %s</span>", next_wave_turn)
 	}
