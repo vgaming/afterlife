@@ -101,16 +101,16 @@ end
 
 local width, height, border = wesnoth.get_map_size()
 local half = (width - 1) / 2
-local left_left = border
-local left_right = border + half - 1
-local right_left = border + half + 1
-local right_right = border + width - 1
+local left_edge = border
+local left_center = half + border - 1
+local right_center = half + border + 1
+local right_edge = border + width - 1
 
 function afterlife.find_vacant(unit, y_min, honor_edge)
 	y_min = y_min or border
 	y_min = math.max(border, y_min)
-	local x_start = unit.side == 1 and right_left or left_right
-	local x_end = unit.side == 1 and right_right or left_left
+	local x_start = unit.x < right_center and right_center or left_center
+	local x_end = unit.x < right_center and right_edge or left_edge
 	local x_step = (x_end - x_start) / math.abs(x_end - x_start)
 	for y = y_min, height do
 		for x = x_start, x_end, x_step do

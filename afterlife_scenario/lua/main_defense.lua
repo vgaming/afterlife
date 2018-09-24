@@ -4,17 +4,28 @@ local wesnoth = wesnoth
 local afterlife = afterlife
 local ipairs = ipairs
 local string = string
+local wml = wml
 local on_event = wesnoth.require("lua/on_event.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
-local wave_length = 2  -- also change: experience_modifier in _main.cfg, text in about.txt
+local wave_length = #wesnoth.sides == 4 and 2 or 1  -- also change: experience_modifier in _main.cfg, text in about.txt
 local copy_strength_start = 32 -- point of no return is about 50%
 local copy_strength_increase = 2
+local teams = { West = { enemy = "East", humans = {} }, East = { enemy = "West", humans = {} } }
+for _, side in ipairs(wesnoth.sides) do
+	local team = teams[side.team_name] or {}
+	teams[side.team_name] = team
+	local is_alive = wml.variables["afterlife_alive_" .. side.side] or #wesnoth.get_units { side = side.side } > 0
+	wml.variables["afterlife_alive_" .. side.side] = is_alive
+	if side.__cfg.allow_player == false then
+		team.ai = side.side
+	elseif is_alive then
+		team.humans[#team.humans + 1] = side.side
+	end
+end
+-- print_as_json(teams)
 
-
-local human_side1, human_side2 = 1,3
-local ai_side1, ai_side2 = 2,4
 
 on_event("start", function()
 	for _, side in ipairs(wesnoth.sides) do
@@ -48,10 +59,10 @@ local function copy_units(from_side, to_side)
 end
 
 on_event("turn refresh", function()
-	if wesnoth.current.turn % wave_length == 1 then
+	if (wesnoth.current.turn + 1) % wave_length == 0 then
 		if wesnoth.current.side == 1 then
-			copy_units(human_side2, ai_side1)
-			copy_units(human_side1, ai_side2)
+			copy_units(teams.West.humans[wesnoth.current.turn % #teams.West.humans + 1], teams.West.ai)
+			copy_units(teams.East.humans[wesnoth.current.turn % #teams.East.humans + 1], teams.East.ai)
 		end
 		if wesnoth.sides[wesnoth.current.side].__cfg.allow_player == false then
 			afterlife.unpetrify_units()
