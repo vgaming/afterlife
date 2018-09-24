@@ -9,8 +9,9 @@ local wml = wml
 local on_event = wesnoth.require("lua/on_event.lua")
 
 
-local wave_length = #wesnoth.sides == 4 and 2 or 1  -- also change: experience_modifier in _main.cfg, text in about.txt
-local copy_strength_start = wave_length == 2 and 32 or 24 -- point of no return is about 50%
+local is_team = #wesnoth.sides == 6
+local wave_length = is_team and 1 or 2  -- also change: experience_modifier in _main.cfg, text in about.txt
+local copy_strength_start = is_team and 26 or 32 -- point of no return is about 50%
 local copy_strength_increase = 2
 local teams = { West = { enemy = "East", humans = {} }, East = { enemy = "West", humans = {} } }
 for _, side in ipairs(wesnoth.sides) do
@@ -44,7 +45,7 @@ end)
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
-		local to_pos = afterlife.find_vacant(unit_original, nil, true)
+		local to_pos = afterlife.find_vacant(unit_original, nil, true, is_team)
 		if to_pos == nil then
 			wesnoth.wml_actions.message {
 				speaker = "narrator",
