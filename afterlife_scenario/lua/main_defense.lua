@@ -6,7 +6,6 @@ local ipairs = ipairs
 local string = string
 local wml = wml
 local on_event = wesnoth.require("lua/on_event.lua")
-local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
 local wave_length = #wesnoth.sides == 4 and 2 or 1  -- also change: experience_modifier in _main.cfg, text in about.txt
