@@ -134,7 +134,7 @@ local function endlevel_team(winner_team)
 				side = side.side,
 			}
 		end
-		if side.team_name == winner_team and side.__cfg.allow_player == true and wesnoth.sides[side].is_local then
+		if side.team_name == winner_team and side.__cfg.allow_player == true and side.is_local then
 			i_am_winner = true
 		end
 	end
