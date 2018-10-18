@@ -1,4 +1,4 @@
-Waves spawn each time you pass a ___%___ label.
+Waves spawn each time you pass a ___N%___ label.
 
 A wave consists of enemy units copied and controlled by AI. The higher the barrier, the stronger the copies.
 
