@@ -52,7 +52,7 @@ end)
 if my_version == "0.0.0" then
 	local text = "This game uses " .. addon_name .. " add-on. "
 		.. "\n"
-		.. "If you'll like it, feel free to install it from add-ons server."
+		.. "If you like it, feel free to install it from add-ons server."
 		.. "\n\n"
 		.. "======================\n\n"
 		.. addon_about
