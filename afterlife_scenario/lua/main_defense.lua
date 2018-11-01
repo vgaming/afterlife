@@ -13,10 +13,12 @@ local is_team = #wesnoth.sides == 6
 local wave_length = is_team and 1 or 2  -- also change: experience_modifier in _main.cfg, text in about.txt
 local copy_strength_start = is_team and 26 or 32 -- point of no return is about 50%
 local copy_strength_increase = 2
-local teams = { West = { enemy = "East", humans = {} }, East = { enemy = "West", humans = {} } }
+local teams = {}
 for _, side in ipairs(wesnoth.sides) do
-	local team = teams[side.team_name] or {}
-	teams[side.team_name] = team
+	local team_id = teams[side.team_name] or (#teams + 1);
+	teams[side.team_name] = team_id;
+	local team = teams[team_id] or { enemy = 3 - team_id, humans = {} };
+	teams[team_id] = team
 	local is_alive = wml.variables["afterlife_alive_" .. side.side] or #wesnoth.get_units { side = side.side } > 0
 	wml.variables["afterlife_alive_" .. side.side] = is_alive
 	if side.__cfg.allow_player == false then
@@ -62,8 +64,8 @@ end
 on_event("turn refresh", function()
 	if (wesnoth.current.turn + 1) % wave_length == 0 then
 		if wesnoth.current.side == 1 then
-			copy_units(teams.West.humans[wesnoth.current.turn % #teams.West.humans + 1], teams.West.ai)
-			copy_units(teams.East.humans[wesnoth.current.turn % #teams.East.humans + 1], teams.East.ai)
+			copy_units(teams[1].humans[wesnoth.current.turn % #teams[1].humans + 1], teams[1].ai)
+			copy_units(teams[2].humans[wesnoth.current.turn % #teams[2].humans + 1], teams[2].ai)
 		end
 		if wesnoth.sides[wesnoth.current.side].__cfg.allow_player == false then
 			afterlife.unpetrify_units()
