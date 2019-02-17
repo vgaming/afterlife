@@ -70,11 +70,13 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 			.. strength_percent .. "% damage, "
 			.. "unit copied from side " .. from_side
 	}
+	local desired_hp = math.max(unit.hitpoints, unit.max_hitpoints) * strength_percent / 100
 	wesnoth.add_modification(unit, "object", {
 		T.effect { apply_to = "attack", increase_damage = increase_percent .. "%" },
-		T.effect { apply_to = "hitpoints", increase_total = increase_percent .. "%", heal_full = true },
+		T.effect { apply_to = "hitpoints", increase_total = increase_percent .. "%" },
 		T.effect { apply_to = "new_ability", T.abilities { ability } },
 	})
+	unit.hitpoints = math.floor(desired_hp + 0.5)
 end
 
 
