@@ -2,4 +2,4 @@
 * BTC: 148AvMtozrKs3MzXCNMGNUTHLoqahw3fCo
 * Source code, issue tracker: https://github.com/vgaming/afterlife
 * vasya or vasya2: my name on wesnoth :)
-* vn971 on IRC.freenode.net (I often visit #wesnoth-dev)
+* vn971 on IRC.freenode.net (I often visit #wesnoth-umc-dev)
