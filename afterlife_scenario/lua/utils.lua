@@ -27,7 +27,8 @@ local function unit_wml_copy(unit_userdata, x, y)
 		variable = "afterlife_unit",
 	}
 	local unit_var = wesnoth.get_variable("afterlife_unit")
-	local id = helper.rand("0..1000000000")
+	local id = "afterlife_"
+		.. helper.rand("0..1000000000")
 		.. helper.rand("0..1000000000")
 		.. helper.rand("0..1000000000")
 	unit_var.id = id
