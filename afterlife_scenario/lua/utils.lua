@@ -126,7 +126,7 @@ function afterlife.scroll_terrain_down()
 	local scrolls = wesnoth.get_variable("afterlife_scrolls") or 0
 	wesnoth.set_variable("afterlife_scrolls", scrolls + 1)
 
-	for y = height - 2, border, -1 do
+	for y = height - 1, border, -1 do
 		for x = left_edge, right_edge do
 			local upper_terrain = wesnoth.get_terrain(x, y - 1)
 			wesnoth.set_terrain(x, y, upper_terrain)
