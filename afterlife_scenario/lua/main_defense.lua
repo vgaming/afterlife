@@ -31,15 +31,8 @@ end
 
 
 on_event("start", function()
+	afterlife.kill_ai_leaders()
 	for _, side in ipairs(wesnoth.sides) do
-		if side.__cfg.allow_player == false then
-			wesnoth.wml_actions.kill {
-				canrecruit = true,
-				side = side.side,
-				fire_event = false,
-				animate = false,
-			}
-		end
 		side.village_support = side.village_support + 2
 	end
 end)

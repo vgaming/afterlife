@@ -101,12 +101,7 @@ function afterlife.prestart_event()
 	for _, side in ipairs(wesnoth.sides) do
 		side.village_support = side.village_support + 1
 	end
-	wesnoth.wml_actions.kill {
-		canrecruit = true,
-		side = ai_side1 .. "," .. ai_side2,
-		fire_event = false,
-		animate = false,
-	}
+	afterlife.kill_ai_leaders()
 	for wave_index, wave_info in ipairs(waves) do
 		for _, x in ipairs { left_label, right_label } do
 			(wesnoth.label or wesnoth.wml_actions.label) {

@@ -128,6 +128,20 @@ function afterlife.find_vacant(unit, y_min, honor_edge, flip)
 end
 
 
+function afterlife.kill_ai_leaders()
+	for _, side in ipairs(wesnoth.sides) do
+		if side.__cfg.allow_player == false then
+			wesnoth.wml_actions.kill {
+				canrecruit = true,
+				side = side.side,
+				fire_event = false,
+				animate = false,
+			}
+		end
+	end
+end
+
+
 local function endlevel_team(winner_team)
 	local i_am_winner = false
 	for _, side in ipairs(wesnoth.sides) do
