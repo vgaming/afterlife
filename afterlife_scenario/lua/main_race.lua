@@ -9,7 +9,6 @@ local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
 local human_side1, human_side2 = 1, 3
-local ai_side1, ai_side2 = 2, 4
 local sides = {
 	[1] = { enemy_human = 3, enemy_ai = 2, half_owner = 1 },
 	[2] = { half_owner = 1 },
