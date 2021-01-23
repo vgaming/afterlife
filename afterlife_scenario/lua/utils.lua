@@ -122,6 +122,59 @@ afterlife.random_terrains = {
 	"Gs^Vh" -- village
 }
 
+
+afterlife.terrain_base_probabilities = {
+	{ terrain = "Gs", base = 2 }, -- grass
+	{ terrain = "Gd", base = 2 }, -- grass
+	{ terrain = "Gg", base = 1 }, -- grass
+	{ terrain = "Wwf", base = 9 }, -- ford
+	{ terrain = "Gs^Fms", base = 1 }, -- forest
+	{ terrain = "Gll^Fp", base = 1 }, -- forest
+	{ terrain = "Mm", base = 1 }, -- mountain
+	{ terrain = "Ai", base = 1 }, -- ice
+	{ terrain = "Hh", base = 1 }, -- hill
+	{ terrain = "Hhd", base = 1 }, -- dry hill
+	{ terrain = "Uu^Uf", base = 2 }, -- mushrooms
+	{ terrain = "Dd^Do", base = 1 }, -- oasis
+	{ terrain = "Ss", base = 1 }, -- swamp
+	{ terrain = "Gs^Vh", base = 1 } -- village
+}
+
+local function get_terrain_probability(i)
+	return wesnoth.get_variable("afterlife_terrain_prob_" .. i) or 1
+end
+local function set_terrain_probability(i, value)
+	wesnoth.set_variable("afterlife_terrain_prob_" .. i, value)
+end
+--local function add_terrain_probability(i, value)
+--	set_terrain_probability(i, get_terrain_probability(i) + value)
+--end
+--function use_terrain(terrain)
+--	local before = get_terrain_probability(terrain)
+--	set_terrain_probability(terrain, math.ceil(before / 2))
+--end
+
+function afterlife.random_terrain()
+	local total = 0
+	for index, item in ipairs(afterlife.terrain_base_probabilities) do
+		local probability = get_terrain_probability(index) + item.base
+		set_terrain_probability(index, probability)
+		total = total + probability
+		print_as_json("terrain " .. item.terrain .. " has probability " .. probability)
+	end
+	local offset = helper.rand("1.." .. total)
+	for index, item in ipairs(afterlife.terrain_base_probabilities) do
+		local probability = get_terrain_probability(index)
+		offset = offset - probability
+		if offset <= 0 then
+			set_terrain_probability(index, math.ceil(probability / 2))
+			return item.terrain
+		end
+	end
+	return "Aa^Ecf" -- snow with fire (to see the error)
+end
+
+
 function afterlife.scroll_terrain_down()
 	local scrolls = wesnoth.get_variable("afterlife_scrolls") or 0
 	wesnoth.set_variable("afterlife_scrolls", scrolls + 1)
@@ -142,7 +195,7 @@ function afterlife.scroll_terrain_down()
 		elseif x == left_edge and rem >= 2 and rem <= 4 then
 			terrain = "Kh"
 		else
-			terrain = afterlife.random_terrains[helper.rand("1.." .. #afterlife.random_terrains)]
+			terrain = afterlife.random_terrain()
 		end
 		wesnoth.set_terrain(x, y, terrain)
 		wesnoth.set_terrain(width - x + 1, y, terrain)
