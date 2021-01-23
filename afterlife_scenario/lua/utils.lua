@@ -7,6 +7,7 @@ local ipairs = ipairs
 local math = math
 local string = string
 local helper = wesnoth.require("lua/helper.lua")
+local on_event = wesnoth.require("lua/on_event.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
@@ -107,6 +108,84 @@ local left_edge = border
 local left_center = half + border - 1
 local right_center = half + border + 1
 local right_edge = border + width - 1
+
+afterlife.random_terrains = {
+	"Gs", "Gd", "Gg", "Gs", "Gd", "Gg", -- grass
+	"Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", -- ford
+	"Gll^Fp", "Gs^Fms", -- forest
+	"Mm", -- mountain
+	"Ai", -- ice
+	"Hh", "Hhd", -- hills
+	"Uu^Uf", "Uu^Uf", -- mushrooms,
+	"Dd^Do", "Dd^Do", -- oasis
+	"Ss", -- swamp
+	"Gs^Vh" -- village
+}
+
+function afterlife.scroll_terrain_down()
+	local scrolls = wesnoth.get_variable("afterlife_scrolls") or 0
+	wesnoth.set_variable("afterlife_scrolls", scrolls + 1)
+
+	for y = height - 2, border, -1 do
+		for x = left_edge, right_edge do
+			local upper_terrain = wesnoth.get_terrain(x, y - 1)
+			wesnoth.set_terrain(x, y, upper_terrain)
+			wesnoth.set_village_owner(x, y, wesnoth.get_village_owner(x, y - 1), false)
+		end
+	end
+	local y = border - 1
+	for x = left_edge, left_center do
+		local rem = scrolls % 10
+		local terrain
+		if x == left_center and rem >= 7 and rem <= 9 then
+			terrain = "Kh"
+		elseif x == left_edge and rem >= 2 and rem <= 4 then
+			terrain = "Kh"
+		else
+			terrain = afterlife.random_terrains[helper.rand("1.." .. #afterlife.random_terrains)]
+		end
+		wesnoth.set_terrain(x, y, terrain)
+		wesnoth.set_terrain(width - x + 1, y, terrain)
+	end
+end
+
+
+function afterlife.scroll_units_down()
+	for y = height, 0, -1 do
+		for _, unit in ipairs(wesnoth.get_units { y = y }) do
+			local current_terrain = wesnoth.get_terrain(unit.x, unit.y)
+			if y == height or wesnoth.unit_movement_cost(unit, current_terrain) > 10 then
+				wesnoth.wml_actions.kill {
+					id = unit.id,
+					fire_event = true,
+					animate = true,
+				}
+			else
+				unit.y = unit.y + 1
+			end
+		end
+	end
+end
+
+
+function afterlife.schedule_scrolling_down(frequency)
+	on_event("start", function()
+		for _ = height, 0, -1 do
+			afterlife.scroll_terrain_down()
+		end
+		wesnoth.wml_actions.redraw {}
+	end)
+	on_event("side turn end", function()
+		local micro_turn = (wesnoth.get_variable("afterlife_micro_turns") or 0) + 1
+		wesnoth.set_variable("afterlife_micro_turns", micro_turn)
+		if micro_turn % frequency == 0 then
+			afterlife.scroll_terrain_down()
+			afterlife.scroll_units_down()
+			wesnoth.wml_actions.redraw {}
+		end
+	end)
+end
+
 
 function afterlife.find_vacant(unit, y_min, honor_edge, flip)
 	y_min = y_min or border

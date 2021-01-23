@@ -1,3 +1,4 @@
 Your units are copied to enemy part of the map each two turns.
 
-New copies get stronger every turn. Survive enemy waves longer than your opponent.
+Copies get stronger every turn.
+Survive enemy waves longer than your opponent!
