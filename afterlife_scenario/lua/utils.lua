@@ -146,13 +146,6 @@ end
 local function set_terrain_probability(i, value)
 	wesnoth.set_variable("afterlife_terrain_prob_" .. i, value)
 end
---local function add_terrain_probability(i, value)
---	set_terrain_probability(i, get_terrain_probability(i) + value)
---end
---function use_terrain(terrain)
---	local before = get_terrain_probability(terrain)
---	set_terrain_probability(terrain, math.ceil(before / 2))
---end
 
 function afterlife.random_terrain()
 	local total = 0
@@ -160,7 +153,6 @@ function afterlife.random_terrain()
 		local probability = get_terrain_probability(index) + item.base
 		set_terrain_probability(index, probability)
 		total = total + probability
-		print_as_json("terrain " .. item.terrain .. " has probability " .. probability)
 	end
 	local offset = helper.rand("1.." .. total)
 	for index, item in ipairs(afterlife.terrain_base_probabilities) do
