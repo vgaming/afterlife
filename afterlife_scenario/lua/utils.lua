@@ -127,7 +127,7 @@ afterlife.terrain_base_probabilities = {
 	{ terrain = "Gs", base = 2 }, -- grass
 	{ terrain = "Gd", base = 2 }, -- grass
 	{ terrain = "Gg", base = 1 }, -- grass
-	{ terrain = "Wwf", base = 9 }, -- ford
+	{ terrain = "Wwf", base = 60 }, -- ford
 	{ terrain = "Gs^Fms", base = 1 }, -- forest
 	{ terrain = "Gll^Fp", base = 1 }, -- forest
 	{ terrain = "Mm", base = 1 }, -- mountain
@@ -137,7 +137,7 @@ afterlife.terrain_base_probabilities = {
 	{ terrain = "Uu^Uf", base = 2 }, -- mushrooms
 	{ terrain = "Dd^Do", base = 1 }, -- oasis
 	{ terrain = "Ss", base = 1 }, -- swamp
-	{ terrain = "Gs^Vh", base = 1 } -- village
+	{ terrain = "Gs^Vh", base = 2 } -- village
 }
 
 local function get_terrain_probability(i)
