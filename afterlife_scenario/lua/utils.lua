@@ -194,24 +194,20 @@ function afterlife.scroll_terrain_down()
 	end
 end
 
-
 function afterlife.scroll_units_down()
-	for y = height, 0, -1 do
+	for _, unit in ipairs(wesnoth.get_units { y = height }) do
+		wesnoth.wml_actions.kill {
+			id = unit.id,
+			fire_event = true,
+			animate = true,
+		}
+	end
+	for y = height - 1, 0, -1 do
 		for _, unit in ipairs(wesnoth.get_units { y = y }) do
-			local current_terrain = wesnoth.get_terrain(unit.x, unit.y)
-			if y == height or wesnoth.unit_movement_cost(unit, current_terrain) > 10 then
-				wesnoth.wml_actions.kill {
-					id = unit.id,
-					fire_event = true,
-					animate = true,
-				}
-			else
-				unit.y = unit.y + 1
-			end
+			unit.y = unit.y + 1
 		end
 	end
 end
-
 
 function afterlife.schedule_scrolling_down(frequency)
 	on_event("start", function()
@@ -224,8 +220,8 @@ function afterlife.schedule_scrolling_down(frequency)
 		local micro_turn = (wesnoth.get_variable("afterlife_micro_turns") or 0) + 1
 		wesnoth.set_variable("afterlife_micro_turns", micro_turn)
 		if micro_turn % frequency == 0 then
-			afterlife.scroll_terrain_down()
 			afterlife.scroll_units_down()
+			afterlife.scroll_terrain_down()
 			wesnoth.wml_actions.redraw {}
 		end
 	end)
