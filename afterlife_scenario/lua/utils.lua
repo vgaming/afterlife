@@ -6,6 +6,7 @@ local wesnoth = wesnoth
 local ipairs = ipairs
 local math = math
 local string = string
+local table = table
 local helper = wesnoth.require("lua/helper.lua")
 local on_event = wesnoth.require("lua/on_event.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
@@ -109,58 +110,58 @@ local left_center = half + border - 1
 local right_center = half + border + 1
 local right_edge = border + width - 1
 
-afterlife.random_terrains = {
-	"Gs", "Gd", "Gg", "Gs", "Gd", "Gg", -- grass
-	"Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", "Wwf", -- ford
-	"Gll^Fp", "Gs^Fms", -- forest
-	"Mm", -- mountain
-	"Ai", -- ice
-	"Hh", "Hhd", -- hills
-	"Uu^Uf", "Uu^Uf", -- mushrooms,
-	"Dd^Do", "Dd^Do", -- oasis
-	"Ss", -- swamp
-	"Gs^Vh" -- village
+local terrain_base_probabilities = {
+	["Gs"] = 3, -- grass
+	["Gd"] = 3, -- grass
+	["Gg"] = 2, -- grass
+	["Wwf"] = 25 , -- ford
+	["Gs^Fms"] = 2, -- forest
+	["Gll^Fp"] = 2, -- forest
+	["Mm"] = 1, -- mountain
+	["Ai"] = 1, -- ice
+	["Hh"] = 2, -- hill
+	["Hhd"] = 2, -- dry hill
+	["Uu^Uf"] = 2, -- mushrooms
+	["Dd^Do"] = 1, -- oasis
+	["Ss"] = 1, -- swamp
+	["Gs^Vh"] = 2, -- swamp
 }
-
-
-afterlife.terrain_base_probabilities = {
-	{ terrain = "Gs", base = 2 }, -- grass
-	{ terrain = "Gd", base = 2 }, -- grass
-	{ terrain = "Gg", base = 1 }, -- grass
-	{ terrain = "Wwf", base = 60 }, -- ford
-	{ terrain = "Gs^Fms", base = 1 }, -- forest
-	{ terrain = "Gll^Fp", base = 1 }, -- forest
-	{ terrain = "Mm", base = 1 }, -- mountain
-	{ terrain = "Ai", base = 1 }, -- ice
-	{ terrain = "Hh", base = 1 }, -- hill
-	{ terrain = "Hhd", base = 1 }, -- dry hill
-	{ terrain = "Uu^Uf", base = 2 }, -- mushrooms
-	{ terrain = "Dd^Do", base = 1 }, -- oasis
-	{ terrain = "Ss", base = 1 }, -- swamp
-	{ terrain = "Gs^Vh", base = 2 } -- village
-}
-
-local function get_terrain_probability(i)
-	return wesnoth.get_variable("afterlife_terrain_prob_" .. i) or 1
+local terrain_variability_multiplier = 1 -- how variable terrain will be
+local terrain_iterator = {}
+local terrain_total = 0
+local function set_probability(terrain_index, value)
+	wesnoth.set_variable("afterlife_terrain_prob_" .. terrain_index, value)
 end
-local function set_terrain_probability(i, value)
-	wesnoth.set_variable("afterlife_terrain_prob_" .. i, value)
+local function get_probability(terrain_index)
+	return wesnoth.get_variable("afterlife_terrain_prob_" .. terrain_index)
 end
 
-function afterlife.random_terrain()
-	local total = 0
-	for index, item in ipairs(afterlife.terrain_base_probabilities) do
-		local probability = get_terrain_probability(index) + item.base
-		set_terrain_probability(index, probability)
-		total = total + probability
+for terr, value in pairs(terrain_base_probabilities) do
+	-- We will need to sort this later because `pairs` is an unordered (OOS-unsafe) iterator
+	terrain_total = terrain_total + value
+	terrain_iterator[#terrain_iterator + 1] = terr
+end
+table.sort(terrain_iterator)
+for idx, terr in ipairs(terrain_iterator) do
+	if get_probability(idx) == nil then
+		local base = terrain_base_probabilities[terr]
+		set_probability(idx, base * terrain_variability_multiplier)
 	end
-	local offset = helper.rand("1.." .. total)
-	for index, item in ipairs(afterlife.terrain_base_probabilities) do
-		local probability = get_terrain_probability(index)
-		offset = offset - probability
+end
+
+local function random_terrain()
+	local offset = helper.rand("1.." .. terrain_total * terrain_variability_multiplier)
+	for idx, terrain in ipairs(terrain_iterator) do
+		offset = offset - get_probability(idx)
 		if offset <= 0 then
-			set_terrain_probability(index, math.ceil(probability / 2))
-			return item.terrain
+			-- Now that this terrain is chosen, decrease the chosen terr probability by total,
+			-- and add a distributed base to all terrains
+			set_probability(idx, get_probability(idx) - terrain_total)
+			for small_idx, small_terrain in ipairs(terrain_iterator) do
+				local base = terrain_base_probabilities[small_terrain]
+				set_probability(small_idx, get_probability(small_idx) + base)
+			end
+			return terrain
 		end
 	end
 	return "Aa^Ecf" -- snow with fire (to see the error)
@@ -187,7 +188,7 @@ function afterlife.scroll_terrain_down()
 		elseif x == left_edge and rem >= 2 and rem <= 4 then
 			terrain = "Kh"
 		else
-			terrain = afterlife.random_terrain()
+			terrain = random_terrain()
 		end
 		wesnoth.set_terrain(x, y, terrain)
 		wesnoth.set_terrain(width - x + 1, y, terrain)

@@ -1,5 +1,4 @@
 * Forum: https://forums.wesnoth.org/viewtopic.php?f=8&amp;t=47827
-* BTC: 148AvMtozrKs3MzXCNMGNUTHLoqahw3fCo
 * Source code, issue tracker: https://github.com/vgaming/afterlife
 * vasili or vasya: my name on wesnoth :)
 * vn971 on IRC.freenode.net (I often visit #wesnoth-umc-dev)
