@@ -37,10 +37,11 @@ on_event("start", function()
 	end
 end)
 
+local ai_starting_location_y = wesnoth.get_starting_location(#wesnoth.sides)[2]
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
 		local percent = copy_strength_start + wesnoth.current.turn * copy_strength_increase
-		local to_pos = afterlife.find_vacant(unit_original, nil, true, is_team)
+		local to_pos = afterlife.find_vacant(unit_original, ai_starting_location_y, true, is_team)
 		if to_pos == nil then
 			wesnoth.wml_actions.message {
 				speaker = "narrator",

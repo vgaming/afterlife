@@ -230,7 +230,6 @@ end
 
 
 function afterlife.find_vacant(unit, y_min, honor_edge, flip)
-	y_min = y_min or border
 	y_min = math.max(border, y_min)
 	local x_start = unit.x < right_center and right_center or left_center
 	local x_end = unit.x < right_center and right_edge or left_edge
