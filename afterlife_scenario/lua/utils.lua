@@ -111,10 +111,10 @@ local right_center = half + border + 1
 local right_edge = border + width - 1
 
 local terrain_base_probabilities = {
-	["Gs"] = 3, -- grass
-	["Gd"] = 3, -- grass
-	["Gg"] = 2, -- grass
-	["Wwf"] = 25 , -- ford
+	["Gs"] = 4, -- grass
+	["Gd"] = 4, -- grass
+	["Gg"] = 3, -- grass
+	["Wwf"] = 28 , -- ford
 	["Gs^Fms"] = 2, -- forest
 	["Gll^Fp"] = 2, -- forest
 	["Mm"] = 1, -- mountain
@@ -124,7 +124,7 @@ local terrain_base_probabilities = {
 	["Uu^Uf"] = 2, -- mushrooms
 	["Dd^Do"] = 1, -- oasis
 	["Ss"] = 1, -- swamp
-	["Gs^Vh"] = 2, -- swamp
+	["Gs^Vh"] = 2, -- village
 }
 local terrain_variability_multiplier = 1 -- how variable terrain will be
 local terrain_iterator = {}
