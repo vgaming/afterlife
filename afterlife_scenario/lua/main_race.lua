@@ -5,6 +5,7 @@ local afterlife = afterlife
 local ipairs = ipairs
 local math = math
 local table = table
+local on_event = wesnoth.require("lua/on_event.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 
@@ -135,9 +136,12 @@ function afterlife.die_event()
 end
 
 
-print("wave count:", wesnoth.get_variable("afterlife_wave_count"))
-
-
+on_event("start", function()
+	for _ = 0, 46 do
+		afterlife.scroll_terrain_down()
+	end
+	wesnoth.wml_actions.redraw {}
+end)
 afterlife.turn_refresh_event = turn_refresh_event
 
 -- >>
