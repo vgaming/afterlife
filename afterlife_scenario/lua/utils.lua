@@ -218,8 +218,7 @@ function afterlife.schedule_scrolling_down(frequency)
 		wesnoth.wml_actions.redraw {}
 	end)
 	on_event("side turn end", function()
-		local micro_turn = (wesnoth.get_variable("afterlife_micro_turns") or 0) + 1
-		wesnoth.set_variable("afterlife_micro_turns", micro_turn)
+		local micro_turn = (wesnoth.current.turn - 1) * #wesnoth.sides + wesnoth.current.side - 4
 		if micro_turn % frequency == 0 then
 			afterlife.scroll_units_down()
 			afterlife.scroll_terrain_down()
