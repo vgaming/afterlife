@@ -11,6 +11,7 @@ local addon_name = tostring((...).name)
 local addon_dir = tostring((...).dir)
 local addon_about = tostring((...).about)
 local addon_icon = tostring((...).icon)
+local addon_host_version = tostring((...).version)
 addon_icon = string.gsub(addon_icon, "\n", "") .. "~SCALE_INTO(144,144)"
 
 wesnoth.wml_actions.set_menu_item {
@@ -19,7 +20,7 @@ wesnoth.wml_actions.set_menu_item {
 	synced = false,
 	T.command {
 		T.message {
-			caption = addon_name,
+			caption = addon_name .. " v" .. addon_host_version,
 			message = addon_about,
 			image = addon_icon
 		}
@@ -52,7 +53,7 @@ end)
 if my_version == "0.0.0" then
 	local text = "This game uses " .. addon_name .. " add-on. "
 		.. "\n"
-		.. "If you like it, feel free to install it from add-ons server."
+		.. "If you'll like it, feel free to install it from add-ons server."
 		.. "\n\n"
 		.. "======================\n\n"
 		.. addon_about
