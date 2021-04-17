@@ -10,7 +10,6 @@ local on_event = wesnoth.require("lua/on_event.lua")
 
 
 local is_team = #wesnoth.sides == 6
-local wave_length = is_team and 1 or 2  -- also change: experience_modifier in _main.cfg, text in about.txt
 local copy_strength_start = is_team and 26 or 32 -- point of no return is about 50%
 local copy_strength_increase = 2
 local teams = {}
@@ -56,7 +55,8 @@ local function copy_units(from_side, to_side)
 end
 
 on_event("turn refresh", function()
-	if (wesnoth.current.turn + 1) % wave_length == 0 then
+	local wave_length = wesnoth.get_variable("afterlife_wave_length") or 2
+	if (wesnoth.current.turn - 1) % wave_length == 0 then
 		if wesnoth.current.side == 1 then
 			copy_units(teams[1].humans[wesnoth.current.turn % #teams[1].humans + 1], teams[1].ai)
 			copy_units(teams[2].humans[wesnoth.current.turn % #teams[2].humans + 1], teams[2].ai)

@@ -169,6 +169,7 @@ end
 
 
 function afterlife.scroll_terrain_down()
+	local castle_length = math.ceil(width / 6)
 	local scrolls = wesnoth.get_variable("afterlife_scrolls") or 0
 	wesnoth.set_variable("afterlife_scrolls", scrolls + 1)
 
@@ -181,11 +182,11 @@ function afterlife.scroll_terrain_down()
 	end
 	local y = border - 1
 	for x = left_edge, left_center do
-		local rem = scrolls % 10
+		local rem = scrolls % (castle_length * 4 - 2)
 		local terrain
-		if x == left_center and rem >= 7 and rem <= 9 then
+		if x == left_center and rem >= castle_length * 2 + 1 and rem <= castle_length * 3 then
 			terrain = "Kh"
-		elseif x == left_edge and rem >= 2 and rem <= 4 then
+		elseif x == left_edge and rem >= 2 and rem <= castle_length + 1 then
 			terrain = "Kh"
 		else
 			terrain = random_terrain()
