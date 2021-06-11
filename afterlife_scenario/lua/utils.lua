@@ -79,6 +79,7 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 		T.effect { apply_to = "new_ability", T.abilities { ability } },
 	})
 	unit.hitpoints = unit.max_hitpoints
+	wesnoth.set_village_owner(to_pos.x, to_pos.y, to_side, false)
 end
 
 
