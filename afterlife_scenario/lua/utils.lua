@@ -95,7 +95,7 @@ local function unpetrify_units()
 				id = unit.id,
 				object_id = "afterlife_grayscale",
 			}
-			local img = string.gsub(unit.image_mods, "GS%(%)$", "NOP()", 1)
+			local img = string.gsub(unit.image_mods, "GS%(%)", "NOP()", 1)
 			wesnoth.add_modification(unit, "object", {
 				T.effect { apply_to = "image_mod", replace = img },
 			})
