@@ -28,10 +28,17 @@ wesnoth.wml_actions.set_menu_item {
 }
 
 local function show_message(text)
-	wesnoth.wml_actions.message {
-		caption = addon_name,
-		message = text,
-		image = addon_icon,
+	wesnoth.wml_actions.event {
+		name = "moveto",
+		first_time_only = true,
+		T.filter_condition {
+			T.lua { code = "return wesnoth.sides[wesnoth.current.side].is_local" }
+		},
+		T.message {
+			caption = addon_name,
+			message = text,
+			image = addon_icon,
+		}
 	}
 end
 
