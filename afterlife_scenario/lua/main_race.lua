@@ -34,8 +34,7 @@ wesnoth.wml_actions.event {
 }
 
 local waves = {}
-local wave_count = wesnoth.get_variable("afterlife_wave_count_") -- added a trailing _ to reset settings
-	or 12 -- also change default in WML
+local wave_count = wesnoth.get_variable("afterlife_wave_count_20210911") or 12 -- also change default in WML
 for _, side in ipairs(wesnoth.sides) do
 	local diff = (wave_count < 7 and 2) or (wave_count < 10 and 1) or 0
 	side.village_gold = side.village_gold + diff
