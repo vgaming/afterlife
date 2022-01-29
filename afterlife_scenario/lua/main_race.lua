@@ -8,6 +8,7 @@ local table = table
 local on_event = wesnoth.require("lua/on_event.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
+afterlife.schedule_attack_abort_triggers()
 
 local human_side1, human_side2 = 1, 3
 local sides = {

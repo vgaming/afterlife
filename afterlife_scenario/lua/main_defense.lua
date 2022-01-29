@@ -36,6 +36,8 @@ on_event("start", function()
 	end
 end)
 
+afterlife.schedule_attack_abort_triggers()
+
 local ai_starting_location_y = wesnoth.get_starting_location(#wesnoth.sides)[2]
 local function copy_units(from_side, to_side)
 	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do

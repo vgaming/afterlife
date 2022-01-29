@@ -103,6 +103,24 @@ local function unpetrify_units()
 	end
 end
 
+function afterlife.schedule_attack_abort_triggers()
+	local invulnerable
+	on_event("attack", function()
+		local event = wesnoth.current.event_context
+		local event_unit = wesnoth.units.find_on_map { x = event.x2, y = event.y2 }[1]
+		if event_unit ~= nil and event_unit.variables.afterlife_fresh_copy == true then
+			invulnerable = event_unit
+			invulnerable:to_recall()
+		end
+	end)
+	on_event("attack end", function()
+		if invulnerable then
+			invulnerable:to_map()
+			invulnerable = nil
+		end
+	end)
+end
+
 
 local width, height, border = wesnoth.get_map_size()
 local half = (width - 1) / 2
