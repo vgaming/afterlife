@@ -197,6 +197,9 @@ function afterlife.scroll_terrain_down()
 			local upper_terrain = wesnoth.get_terrain(x, y - 1)
 			wesnoth.set_terrain(x, y, upper_terrain)
 			wesnoth.set_village_owner(x, y, wesnoth.get_village_owner(x, y - 1), false)
+			if bonustile and bonustile.exported_change_bonus_position_v1 then
+				bonustile.exported_change_bonus_position_v1(x, y - 1, x, y)
+			end
 		end
 	end
 	local y = border - 1
