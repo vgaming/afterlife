@@ -136,6 +136,7 @@ end
 
 local width = wesnoth.current.map.playable_width
 local height = wesnoth.current.map.playable_height
+local scrollable_height = math.ceil(height * 0.6) -- lower
 local border = wesnoth.current.map.border_size
 local half = (width - 1) / 2
 local left_edge = border
@@ -271,10 +272,10 @@ end
 
 function afterlife.scroll_terrain_down()
 	local castle_length = math.ceil(width / 6)
-	local scrolls = afterlife.get_variable("afterlife_scrolls") or 0
+	local scrolls = afterlife.get_variable("afterlife_scrolls") or 2
 	afterlife.set_variable("afterlife_scrolls", scrolls + 1)
 
-	for y = height - 1, border, -1 do
+	for y = height - 1, scrollable_height, -1 do
 		for x = left_edge, right_edge do
 			local upper_terrain = wesnoth.current.map[{x, y - 1}]
 			wesnoth.current.map[{x, y}] = upper_terrain
@@ -286,8 +287,8 @@ function afterlife.scroll_terrain_down()
 			end
 		end
 	end
-	local y = border - 1
-	for x = left_edge, left_center do
+	local y = scrollable_height + 1
+	for x = left_edge, left_center do -- castle placement on the left and right
 		local rem = scrolls % (castle_length * 4 - 2)
 		local terrain
 		if x == left_center and rem >= castle_length * 2 + 1 and rem <= castle_length * 3 then
