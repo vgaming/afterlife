@@ -1,4 +1,8 @@
--- << afterlife_main
+-- << main_race | afterlife_scenario
+local filename = "main_race | afterlife_scenario"
+if afterlife.is_loaded(filename) then
+	return
+end
 
 local wesnoth = wesnoth
 local afterlife = afterlife
@@ -6,7 +10,7 @@ local ipairs = ipairs
 local math = math
 local table = table
 local on_event = wesnoth.require("lua/on_event.lua")
-local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
+local T = wml.tag
 
 afterlife.schedule_attack_abort_triggers()
 
@@ -35,7 +39,7 @@ wesnoth.wml_actions.event {
 }
 
 local waves = {}
-local wave_count = wesnoth.get_variable("afterlife_wave_count_20210911") or 12 -- also change default in WML
+local wave_count = afterlife.get_variable("afterlife_wave_count_20210911") or 12 -- also change default in WML
 for _, side in ipairs(wesnoth.sides) do
 	local diff = (wave_count < 7 and 2) or (wave_count < 10 and 1) or 0
 	side.village_gold = side.village_gold + diff
@@ -54,7 +58,7 @@ local left_label, right_label = border + math.floor(width * 1 / 4), border + mat
 
 local function copy_units(from_side, to_side, copy_strength, y_min)
 	--print("generating wave", from_side, to_side, copy_strength, y_min)
-	for _, unit_original in ipairs(wesnoth.get_units { side = from_side }) do
+	for _, unit_original in ipairs(wesnoth.units.find_on_map { side = from_side }) do
 		local to_pos = afterlife.find_vacant(unit_original, y_min)
 		afterlife.copy_unit(unit_original, to_pos, to_side, copy_strength)
 	end
@@ -62,11 +66,11 @@ end
 
 
 local function generate_wave(side)
-	local prev_distance = wesnoth.get_variable("afterlife_distance_" .. side) or height + 1
-	local units = wesnoth.get_units { side = side }
+	local prev_distance = afterlife.get_variable("afterlife_distance_" .. side) or height + 1
+	local units = wesnoth.units.find_on_map { side = side }
 	table.sort(units, function(a, b) return a.y > b.y end)
 	local new_distance = math.min(prev_distance, units[#units].y)
-	wesnoth.set_variable("afterlife_distance_" .. side, new_distance)
+	afterlife.set_variable("afterlife_distance_" .. side, new_distance)
 	--print("side", side, "distance", new_distance)
 	for idx, wave_info in ipairs(waves) do
 		if new_distance <= wave_info.y and prev_distance > wave_info.y then
@@ -83,7 +87,7 @@ end
 
 local function check_win(side)
 	if (side == human_side1 or side == human_side2)
-		and wesnoth.get_variable("afterlife_distance_" .. side) <= waves[#waves].y
+		and afterlife.get_variable("afterlife_distance_" .. side) <= waves[#waves].y
 		and not wesnoth.wml_conditionals.has_unit { side = sides[side].enemy_ai } then
 		afterlife.endlevel_team(wesnoth.sides[side].team_name)
 	end

@@ -1,15 +1,27 @@
--- << utils_afterlife
+-- << utils | afterlife_scenario
+local filename = "utils | afterlife_scenario"
+if afterlife.is_loaded(filename) then
+	return
+end
 
-afterlife = {}
 local afterlife = afterlife
 local wesnoth = wesnoth
 local ipairs = ipairs
 local math = math
 local string = string
 local table = table
-local helper = wesnoth.require("lua/helper.lua")
 local on_event = wesnoth.require("lua/on_event.lua")
-local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
+local T = wml.tag
+
+---@param key string
+function afterlife.get_variable(key)
+	return wml.variables[key]
+end
+
+---@param key string
+function afterlife.set_variable(key, value)
+	wml.variables[key] = value
+end
 
 
 wesnoth.wml_conditionals = wesnoth.wml_conditionals or {}
@@ -28,21 +40,21 @@ local function unit_wml_copy(unit_userdata, x, y)
 		T.filter { id = unit_userdata.id },
 		variable = "afterlife_unit",
 	}
-	local unit_var = wesnoth.get_variable("afterlife_unit")
+	local unit_var = afterlife.get_variable("afterlife_unit")
 	local id = "afterlife_"
-		.. helper.rand("0..1000000000")
-		.. helper.rand("0..1000000000")
-		.. helper.rand("0..1000000000")
+		.. mathx.random_choice("0..1000000000")
+		.. mathx.random_choice("0..1000000000")
+		.. mathx.random_choice("0..1000000000")
 	unit_var.id = id
 	unit_var.underlying_id = id
 	unit_var.canrecruit = false
 	unit_var.x = x
 	unit_var.y = y
-	wesnoth.set_variable("afterlife_unit", unit_var)
+	afterlife.set_variable("afterlife_unit", unit_var)
 	wesnoth.wml_actions.unstore_unit {
 		variable = "afterlife_unit",
 	}
-	wesnoth.set_variable("afterlife_unit", nil)
+	afterlife.set_variable("afterlife_unit", nil)
 	return id
 end
 
@@ -52,13 +64,13 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 	if unit_original.type == "Fog Clearer" then return end
 	local from_side = unit_original.side
 	local new_id = unit_wml_copy(unit_original, to_pos.x, to_pos.y)
-	local unit = wesnoth.get_units { id = new_id }[1]
+	local unit = wesnoth.units.find_on_map { id = new_id }[1]
 	unit.side = to_side
 	unit.status.poisoned = false
 	unit.status.slowed = false
 	unit.variables.afterlife_fresh_copy = true
 	unit.moves = unit.max_moves
-	wesnoth.add_modification(unit, "object", {
+	wesnoth.units.add_modification(unit, "object", {
 		id = "afterlife_grayscale",
 		T.effect { apply_to = "image_mod", add="GS()" },
 		T.effect { apply_to = "zoc", value = false },
@@ -73,19 +85,19 @@ local function copy_unit(unit_original, to_pos, to_side, strength_percent)
 			.. strength_percent .. "% damage, "
 			.. "unit copied from side " .. from_side
 	}
-	wesnoth.add_modification(unit, "object", {
+	wesnoth.units.add_modification(unit, "object", {
 		T.effect { apply_to = "attack", increase_damage = increase_percent .. "%" },
 		T.effect { apply_to = "hitpoints", increase_total = increase_percent .. "%" },
 		T.effect { apply_to = "new_ability", T.abilities { ability } },
 	})
 	unit.hitpoints = unit.max_hitpoints
-	wesnoth.set_village_owner(to_pos.x, to_pos.y, to_side, false)
+	wesnoth.map.set_owner(to_pos.x, to_pos.y, to_side, false)
 end
 
 
 local function unpetrify_units()
 	local status_filter = "invulnerable"
-	local filtered_units = wesnoth.get_units { side = wesnoth.current.side, status = status_filter }
+	local filtered_units = wesnoth.units.find_on_map { side = wesnoth.current.side, status = status_filter }
 	for _, unit in ipairs(filtered_units) do
 		if unit.variables.afterlife_fresh_copy then
 			unit.status.petrified = false
@@ -96,7 +108,7 @@ local function unpetrify_units()
 				object_id = "afterlife_grayscale",
 			}
 			local img = string.gsub(unit.image_mods, "GS%(%)", "NOP()", 1)
-			wesnoth.add_modification(unit, "object", {
+			wesnoth.units.add_modification(unit, "object", {
 				T.effect { apply_to = "image_mod", replace = img },
 			})
 		end
@@ -122,12 +134,82 @@ function afterlife.schedule_attack_abort_triggers()
 end
 
 
-local width, height, border = wesnoth.get_map_size()
+local width = wesnoth.current.map.playable_width
+local height = wesnoth.current.map.playable_height
+local border = wesnoth.current.map.border_size
 local half = (width - 1) / 2
 local left_edge = border
 local left_center = half + border - 1
 local right_center = half + border + 1
 local right_edge = border + width - 1
+
+-----@param name string
+-----@param probability_table table
+-----@param variability_multiplier number how variable the terrain will be
+--local function create_generator(name, base_probs, variability_multiplier)
+--	local function set_probability(terrain_index, value)
+--		afterlife.set_variable("afterlife_terrain_prob_" .. name .. "_" .. terrain_index, value)
+--	end
+--	local function get_probability(terrain_index)
+--		return afterlife.get_variable("afterlife_terrain_prob_" .. name .. "_" .. terrain_index)
+--	end
+--	local iterator = {}
+--	local total = 0
+--	for terr, value in pairs(base_probs) do
+--		-- We will need to sort this later because `pairs` is an unordered (OOS-unsafe) iterator
+--		total = total + value
+--		iterator[#iterator + 1] = terr
+--	end
+--	table.sort(iterator)
+--	for idx, terr in ipairs(iterator) do
+--		if get_probability(idx) == nil then
+--			local base = base_probs[terr]
+--			set_probability(idx, base * variability_multiplier)
+--		end
+--	end
+--
+--	return {
+--		probabilities = probability_table,
+--		iterator = iterator,
+--		total = total,
+--	}
+--end
+--
+--local generator_main = create_generator("main", 1, {
+--	["Gs"] = 4, -- grass
+--	["Gd"] = 4, -- grass
+--	["Gg"] = 3, -- grass
+--	["Wwf"] = 28, -- ford
+--	["Gs^Fms"] = 2, -- forest
+--	["Gll^Fp"] = 2, -- forest
+--	["Mm"] = 1, -- mountain
+--	["Ai"] = 1, -- ice
+--	["Hh"] = 2, -- hill
+--	["Hhd"] = 2, -- dry hill
+--	["Uu^Uf"] = 2, -- mushrooms
+--	["Dd^Do"] = 1, -- oasis
+--	["Ss"] = 1, -- swamp
+--	["Gs^Vh"] = 2, -- village
+--})
+--
+--local function random_terrain_from_generator(generator)
+--	local offset = mathx.random_choice("1.." .. terrain_total * terrain_variability_multiplier)
+--	for idx, terrain in ipairs(terrain_iterator) do
+--		offset = offset - get_probability(idx)
+--		if offset <= 0 then
+--			-- Now that this terrain is chosen, decrease the chosen terr probability by total,
+--			-- and add a distributed base to all terrains
+--			set_probability(idx, get_probability(idx) - terrain_total)
+--			for small_idx, small_terrain in ipairs(terrain_iterator) do
+--				local base = terrain_base_probabilities[small_terrain]
+--				set_probability(small_idx, get_probability(small_idx) + base)
+--			end
+--			return terrain
+--		end
+--	end
+--	return "Aa^Ecf" -- snow with fire (to see the error)
+--end
+--
 
 local terrain_base_probabilities = {
 	["Gs"] = 4, -- grass
@@ -149,10 +231,10 @@ local terrain_variability_multiplier = 1 -- how variable terrain will be
 local terrain_iterator = {}
 local terrain_total = 0
 local function set_probability(terrain_index, value)
-	wesnoth.set_variable("afterlife_terrain_prob_" .. terrain_index, value)
+	afterlife.set_variable("afterlife_terrain_prob_" .. terrain_index, value)
 end
 local function get_probability(terrain_index)
-	return wesnoth.get_variable("afterlife_terrain_prob_" .. terrain_index)
+	return afterlife.get_variable("afterlife_terrain_prob_" .. terrain_index)
 end
 
 for terr, value in pairs(terrain_base_probabilities) do
@@ -169,7 +251,7 @@ for idx, terr in ipairs(terrain_iterator) do
 end
 
 local function random_terrain()
-	local offset = helper.rand("1.." .. terrain_total * terrain_variability_multiplier)
+	local offset = mathx.random_choice("1.." .. terrain_total * terrain_variability_multiplier)
 	for idx, terrain in ipairs(terrain_iterator) do
 		offset = offset - get_probability(idx)
 		if offset <= 0 then
@@ -189,14 +271,14 @@ end
 
 function afterlife.scroll_terrain_down()
 	local castle_length = math.ceil(width / 6)
-	local scrolls = wesnoth.get_variable("afterlife_scrolls") or 0
-	wesnoth.set_variable("afterlife_scrolls", scrolls + 1)
+	local scrolls = afterlife.get_variable("afterlife_scrolls") or 0
+	afterlife.set_variable("afterlife_scrolls", scrolls + 1)
 
 	for y = height - 1, border, -1 do
 		for x = left_edge, right_edge do
-			local upper_terrain = wesnoth.get_terrain(x, y - 1)
-			wesnoth.set_terrain(x, y, upper_terrain)
-			wesnoth.set_village_owner(x, y, wesnoth.get_village_owner(x, y - 1), false)
+			local upper_terrain = wesnoth.current.map[{x, y - 1}]
+			wesnoth.current.map[{x, y}] = upper_terrain
+			wesnoth.map.set_owner(x, y, wesnoth.get_village_owner(x, y - 1), false)
 			if wml.variables["bonustile_enabled"]
 				and _G.bonustile ~= nil
 				and _G.bonustile.exported_change_bonus_position_v1 ~= nil then
@@ -221,7 +303,7 @@ function afterlife.scroll_terrain_down()
 end
 
 function afterlife.scroll_units_down()
-	for _, unit in ipairs(wesnoth.get_units { y = height }) do
+	for _, unit in ipairs(wesnoth.units.find_on_map { y = height }) do
 		wesnoth.wml_actions.kill {
 			id = unit.id,
 			fire_event = true,
@@ -229,7 +311,7 @@ function afterlife.scroll_units_down()
 		}
 	end
 	for y = height - 1, 0, -1 do
-		for _, unit in ipairs(wesnoth.get_units { y = y }) do
+		for _, unit in ipairs(wesnoth.units.find_on_map { y = y }) do
 			unit.y = unit.y + 1
 		end
 	end
@@ -262,8 +344,8 @@ function afterlife.find_vacant(unit, y_min, honor_edge, flip)
 	for y = y_min, height do
 		for x = x_start, x_end, x_step do
 			local is_edge = honor_edge and y == y_min and x == x_start
-			if wesnoth.wml_conditionals.has_unit { x = x, y = y } == false
-				and wesnoth.get_terrain(x, y) ~= "Xv"
+			if wesnoth.units.get(x, y) == nil
+				and wesnoth.current.map[{x, y}] ~= "Xv"
 				and not is_edge then
 				return { x = x, y = y }
 			end

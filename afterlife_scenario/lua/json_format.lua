@@ -1,4 +1,8 @@
--- << json_format
+-- << json_format | afterlife_scenario
+local filename = "json_format | afterlife_scenario"
+if afterlife.is_loaded(filename) then
+	return
+end
 
 -- wesnoth.dofile("~add-ons/afterlife_scenario/lua/json_format.lua")
 
