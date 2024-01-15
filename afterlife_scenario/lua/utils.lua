@@ -114,6 +114,7 @@ local function unpetrify_units()
 			wesnoth.units.add_modification(unit, "object", {
 				T.effect { apply_to = "image_mod", replace = img },
 			})
+			unit.hitpoints = unit.max_hitpoints
 		end
 	end
 end
