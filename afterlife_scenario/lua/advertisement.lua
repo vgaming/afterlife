@@ -1,6 +1,9 @@
 -- << advertisement | afterlife_scenario
-if afterlife.is_loaded("advertisement | afterlife_scenario") then
+if rawget(_G, "advertisement | afterlife_scenario") then
+	-- TODO: remove this code once https://github.com/wesnoth/wesnoth/issues/8157 is fixed
 	return
+else
+	rawset(_G, "advertisement | afterlife_scenario", true)
 end
 
 local wesnoth = wesnoth

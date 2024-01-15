@@ -1,7 +1,9 @@
 -- << json_format | afterlife_scenario
-local filename = "json_format | afterlife_scenario"
-if afterlife.is_loaded(filename) then
+if rawget(_G, "json_format | afterlife_scenario") then
+	-- TODO: remove this code once https://github.com/wesnoth/wesnoth/issues/8157 is fixed
 	return
+else
+	rawset(_G, "json_format | afterlife_scenario", true)
 end
 
 -- wesnoth.dofile("~add-ons/afterlife_scenario/lua/json_format.lua")

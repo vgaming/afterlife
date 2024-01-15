@@ -1,9 +1,12 @@
 -- << utils | afterlife_scenario
-local filename = "utils | afterlife_scenario"
-if afterlife.is_loaded(filename) then
+if rawget(_G, "utils | afterlife_scenario") then
+	-- TODO: remove this code once https://github.com/wesnoth/wesnoth/issues/8157 is fixed
 	return
+else
+	rawset(_G, "utils | afterlife_scenario", true)
 end
 
+afterlife = {}
 local afterlife = afterlife
 local wesnoth = wesnoth
 local ipairs = ipairs
